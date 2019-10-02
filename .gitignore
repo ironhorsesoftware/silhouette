@@ -2,3 +2,6 @@
 *.log
 .gitignore~
 target/
+.classpath
+.project
+.settings/
