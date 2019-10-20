@@ -10,6 +10,7 @@ lazy val projectMaintainer = "mpigott@ironhorsesoftware.com"
 lazy val silhouetteVersion = "6.1.1"
 lazy val playVersion = "2.7.3"
 lazy val playSlickVersion = "4.0.2"
+lazy val scalaGuiceVersion = "4.2.6"
 
 lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
@@ -30,19 +31,20 @@ lazy val silhouette = (project in file("silhouette"))
 		  "com.typesafe.play"      %% "play-ws"                         % playVersion,
 		  "com.typesafe.play"      %% "play-openid"                     % playVersion,
 		  "com.mohiva"             %% "play-silhouette"                 % silhouetteVersion,
-		  "net.codingwell"         %% "scala-guice"                     % "4.2.6"
+		  "net.codingwell"         %% "scala-guice"                     % scalaGuiceVersion
 		)
 	)
 
 lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
-	.dependsOn(silhouette)
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
 		maintainer := projectMaintainer,
 		libraryDependencies ++= Seq(
-			"com.mohiva"             %% "play-silhouette-cas"           % silhouetteVersion,
-			"com.mohiva"             %% "play-silhouette-persistence"   % silhouetteVersion,
-			"com.typesafe.play"      %% "play-slick"                    % playSlickVersion
+		    "com.mohiva"           %% "play-silhouette"               % silhouetteVersion,
+			"com.mohiva"           %% "play-silhouette-cas"           % silhouetteVersion,
+			"com.mohiva"           %% "play-silhouette-persistence"   % silhouetteVersion,
+			"com.typesafe.play"    %% "play-slick"                    % playSlickVersion,
+		    "net.codingwell"       %% "scala-guice"                   % scalaGuiceVersion
 		)
 	)
