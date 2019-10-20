@@ -22,7 +22,7 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   import dbConfig._
   import profile.api._
 
-  private class DbPasswordCredentials(tag : Tag) extends Table[CasCredentials](tag, "cas_credentials") {
+  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "cas_credentials") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -31,7 +31,7 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def * = (id, providerId, providerKey, ticket) <> (CasCredentials.tupled, CasCredentials.unapply)
   }
 
-  private val credentials = TableQuery[DbPasswordCredentials]
+  private val credentials = TableQuery[DbCasCredentials]
 
   def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = Future.failed(new UnsupportedOperationException)
 
