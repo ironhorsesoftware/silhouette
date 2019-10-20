@@ -41,6 +41,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 		name := "silhouette-persistence",
 		maintainer := projectMaintainer,
 		libraryDependencies ++= Seq(
+			"com.mohiva"             %% "play-silhouette-cas"           % silhouetteVersion,
 			"com.mohiva"             %% "play-silhouette-persistence"   % silhouetteVersion,
 			"com.typesafe.play"      %% "play-slick"                    % playSlickVersion
 		)
