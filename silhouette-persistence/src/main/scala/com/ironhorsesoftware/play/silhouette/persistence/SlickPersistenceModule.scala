@@ -6,32 +6,36 @@ import com.google.inject.{AbstractModule, Provides}
 
 import net.codingwell.scalaguice.ScalaModule
 
-import com.mohiva.play.silhouette.impl.providers.{OAuth1Info, OAuth2Info, OpenIDInfo, CasInfo}
+import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.util.PasswordInfo
-
-import com.mohiva.play.silhouette.persistence.daos.AuthInfoDAO
+import com.mohiva.play.silhouette.impl.providers.{OAuth1Info, OAuth2Info, OpenIDInfo, CasInfo}
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
+import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickCasInfoDAO, SlickPasswordInfoDAO}
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOAuth1InfoDAO, SlickOAuth2InfoDAO}
 import com.ironhorsesoftware.play.silhouette.persistence.daos.SlickOpenIdDAO
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
 
   override def configure {
-    bind[AuthInfoDAO[CasInfo]].to[SlickCasInfoDAO]
-    bind[AuthInfoDAO[PasswordInfo]].to[SlickPasswordInfoDAO]
-    bind[AuthInfoDAO[OAuth1Info]].to[SlickOAuth1InfoDAO]
-    bind[AuthInfoDAO[OAuth2Info]].to[SlickOAuth2InfoDAO]
-    bind[AuthInfoDAO[OpenIDInfo]].to[SlickOpenIdDAO]
+    bind[DelegableAuthInfoDAO[CasInfo]].to[SlickCasInfoDAO]
+    bind[DelegableAuthInfoDAO[PasswordInfo]].to[SlickPasswordInfoDAO]
+    bind[DelegableAuthInfoDAO[OAuth1Info]].to[SlickOAuth1InfoDAO]
+    bind[DelegableAuthInfoDAO[OAuth2Info]].to[SlickOAuth2InfoDAO]
+    bind[DelegableAuthInfoDAO[OpenIDInfo]].to[SlickOpenIdDAO]
   }
 
-  /*
+  @Provides
   def provideAuthInfoRepository(
-      casInfoDAO : AuthInfoDAO[CasInfo],
-      passwordInfoDAO : AuthInfoDAO[PasswordInfo],
-      oauth1InfoDAO : AuthInfoDAO[OAuth1Info],
-      oauth2InfoDAO : AuthInfoDAO[OAuth2Info],
-      openIdInfoDAO : AuthInfoDAO[OpenIDInfo]) = {
+      casInfoDAO : DelegableAuthInfoDAO[CasInfo],
+      passwordInfoDAO : DelegableAuthInfoDAO[PasswordInfo],
+      oauth1InfoDAO : DelegableAuthInfoDAO[OAuth1Info],
+      oauth2InfoDAO : DelegableAuthInfoDAO[OAuth2Info],
+      openIdInfoDAO : DelegableAuthInfoDAO[OpenIDInfo]) : AuthInfoRepository = {
+
+    new DelegableAuthInfoRepository(casInfoDAO, passwordInfoDAO, oauth1InfoDAO, oauth2InfoDAO, openIdInfoDAO)
   }
-  */
 }

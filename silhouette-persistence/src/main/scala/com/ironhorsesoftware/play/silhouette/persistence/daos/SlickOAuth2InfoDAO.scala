@@ -3,6 +3,7 @@ package com.ironhorsesoftware.play.silhouette.persistence.daos
 import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
@@ -12,11 +13,11 @@ import slick.jdbc.JdbcProfile
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
-import com.mohiva.play.silhouette.persistence.daos.AuthInfoDAO
+import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
 import com.ironhorsesoftware.play.silhouette.persistence.model.OAuth2Credentials
 
-class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends AuthInfoDAO[OAuth2Info] with Logging {
+class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[OAuth2Info]) extends DelegableAuthInfoDAO[OAuth2Info] with Logging {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
