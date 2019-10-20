@@ -16,6 +16,9 @@ lazy val root = (project in file ("."))
 	.settings(
 		name := "root",
 		crossScalaVersions := Seq(scala213, scala212, scala211),
+		publishLocal := {},
+		publishM2 := {},
+		publishArtifact := false
 	).dependsOn(silhouette, silhouettePersistence)
 
 lazy val silhouette = (project in file("silhouette"))
