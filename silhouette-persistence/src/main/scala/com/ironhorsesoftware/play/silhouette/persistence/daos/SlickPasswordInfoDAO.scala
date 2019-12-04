@@ -42,14 +42,15 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
         credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
           case Some(credentials) => DBIO.successful(credentials.passwordInfo)
           case None => {
-            credentials += PasswordCredentials(loginInfo, authInfo)
-            DBIO.successful(authInfo)
+            for {
+              _ <- credentials += PasswordCredentials(loginInfo, authInfo)  
+            } yield authInfo
           }
         }
       }
     result
   }
-  
+
   def find(loginInfo : LoginInfo) : Future[Option[PasswordInfo]] = db.run {
     credentials.filter(cred => cred.providerId === loginInfo.providerID && cred.providerKey === loginInfo.providerKey).result.headOption.map ( r => r.map { c =>
       c.passwordInfo
