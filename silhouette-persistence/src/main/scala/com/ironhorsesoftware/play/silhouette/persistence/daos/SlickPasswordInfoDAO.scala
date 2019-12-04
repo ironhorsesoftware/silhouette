@@ -36,35 +36,57 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
 
   private val credentials = TableQuery[DbPasswordCredentials]
 
-  def add(loginInfo : LoginInfo, authInfo : PasswordInfo) : Future[PasswordInfo] = db.run {
-    for {
-      _ <- (credentials += PasswordCredentials(loginInfo, authInfo))
-    } yield authInfo
+  def add(loginInfo : LoginInfo, authInfo : PasswordInfo) : Future[PasswordInfo] = {
+    val result =
+      db.run {
+        credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
+          case Some(credentials) => DBIO.successful(credentials.passwordInfo)
+          case None => {
+            credentials += PasswordCredentials(loginInfo, authInfo)
+            DBIO.successful(authInfo)
+          }
+        }
+      }
+    result
   }
   
   def find(loginInfo : LoginInfo) : Future[Option[PasswordInfo]] = db.run {
-    credentials.filter(cred => cred.providerKey === loginInfo.providerKey).result.headOption.map ( r => r.map { c =>
+    credentials.filter(cred => cred.providerId === loginInfo.providerID && cred.providerKey === loginInfo.providerKey).result.headOption.map ( r => r.map { c =>
       c.passwordInfo
     })
   }
 
-  // TODO: Revisit this
   def remove(loginInfo : LoginInfo) : Future[Unit] = db.run {
-    val q = for { creds <- credentials if creds.providerKey === loginInfo.providerKey } yield creds
+    val q = for { creds <- credentials if creds.providerId === loginInfo.providerID && creds.providerKey === loginInfo.providerKey } yield creds
     q.delete.map(_ => Unit)
   }
 
-  // TODO: This is wrong
   def save(loginInfo : LoginInfo, authInfo : PasswordInfo) : Future[PasswordInfo] = db.run {
+    val pwdCreds = PasswordCredentials(loginInfo, authInfo)
+
     for {
-      _ <- credentials.insertOrUpdate(PasswordCredentials(loginInfo, authInfo))
-    } yield authInfo
+      rowsAffected <- credentials.filter(c => c.providerId === pwdCreds.providerId && c.providerKey === pwdCreds.providerKey).map { pwdCreds =>
+          (pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt)
+        }.update((pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt))
+      result <- rowsAffected match {
+          case 0 => credentials += pwdCreds
+          case n => DBIO.successful(n)
+        }
+      queryResult <- credentials.filter(cred => cred.providerKey === pwdCreds.providerKey && cred.providerId === pwdCreds.providerId).result.head.map { c =>
+        c.passwordInfo
+      }
+    } yield queryResult
   }
 
-  // TODO: This is wrong
   def update(loginInfo : LoginInfo, authInfo : PasswordInfo) : Future[PasswordInfo] = db.run {
     for {
-      _ <- credentials.update(PasswordCredentials(loginInfo, authInfo))
-    } yield authInfo
+      numRowsAffected <- credentials.filter(cred => cred.providerId === loginInfo.providerID && cred.providerKey === loginInfo.providerKey).map { creds =>
+          (creds.password, creds.passwordHasher, creds.passwordSalt)
+        }.update((authInfo.password, authInfo.hasher, authInfo.salt))
+      result <- numRowsAffected match {
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}"))
+          case _ => DBIO.successful(authInfo)
+        }
+    } yield result
   }
 }
