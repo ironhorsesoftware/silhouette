@@ -10,8 +10,8 @@ import slick.jdbc.JdbcProfile
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OpenIDInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
-import com.ironhorsesoftware.play.silhouette.persistence.model.{OpenIdCredentials}
-import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.OpenIdAttributetware.play.silhouette.persistence.model.authinfo.OpenIdCredentials
+import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.{OpenIdCredentials, OpenIdAttribute}
+
 
 class SlickOpenIdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, implicit val classTag : ClassTag[OpenIDInfo]) extends DelegableAuthInfoDAO[OpenIDInfo] with Logging {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]

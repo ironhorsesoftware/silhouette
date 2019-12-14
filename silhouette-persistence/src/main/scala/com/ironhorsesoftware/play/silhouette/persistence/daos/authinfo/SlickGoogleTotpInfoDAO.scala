@@ -10,8 +10,8 @@ import slick.jdbc.JdbcProfile
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
-import com.ironhorsesoftware.play.silhouette.persistence.model.{GoogleTotpScratchCode}
-import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.GoogleTotpCredentialse.play.silhouette.persistence.model.authinfo.GoogleTotpScratchCode
+
+import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.{GoogleTotpCredentials, GoogleTotpScratchCode}
 
 class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[GoogleTotpInfo]) extends DelegableAuthInfoDAO[GoogleTotpInfo] with Logging {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]

@@ -1,9 +1,7 @@
 package com.ironhorsesoftware.play.silhouette.persistence.model.authinfo
 
 import com.mohiva.play.silhouette.api.LoginInfo
-import com.mohiva.play.silhouette.impl.providers.O
-import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.OpenIdAttributepenIDInfo
-import com.ironhorsesoftware.play.silhouette.persistence.model.OpenIdAttribute
+import com.mohiva.play.silhouette.impl.providers.OpenIDInfo
 
 case class OpenIdCredentials(id : Int, providerId : String, providerKey : String, openId : String) {
   def loginInfo = LoginInfo(providerId, providerKey)
