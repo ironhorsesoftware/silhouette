@@ -1,4 +1,4 @@
-package com.ironhorsesoftware.play.silhouette.persistence.daos.authinfo
+package com.ironhorsesoftware.play.silhouette.persistence.daos
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
