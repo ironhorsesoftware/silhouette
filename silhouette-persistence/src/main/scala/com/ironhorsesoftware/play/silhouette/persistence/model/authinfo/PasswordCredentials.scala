@@ -1,4 +1,4 @@
-package com.ironhorsesoftware.play.silhouette.persistence.model
+package com.ironhorsesoftware.play.silhouette.persistence.model.authinfo
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo

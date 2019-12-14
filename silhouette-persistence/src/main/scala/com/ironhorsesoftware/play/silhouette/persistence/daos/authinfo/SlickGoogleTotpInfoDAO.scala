@@ -1,21 +1,17 @@
 package com.ironhorsesoftware.play.silhouette.persistence.daos
 
 import javax.inject.Inject
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
-
 import play.api.Logging
 import play.api.db.slick.DatabaseConfigProvider
-
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.JdbcProfile
-
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.GoogleTotpInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
-
-import com.ironhorsesoftware.play.silhouette.persistence.model.{GoogleTotpCredentials, GoogleTotpScratchCode}
+import com.ironhorsesoftware.play.silhouette.persistence.model.{GoogleTotpScratchCode}
+import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.GoogleTotpCredentialse.play.silhouette.persistence.model.authinfo.GoogleTotpScratchCode
 
 class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[GoogleTotpInfo]) extends DelegableAuthInfoDAO[GoogleTotpInfo] with Logging {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]

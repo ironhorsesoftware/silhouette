@@ -15,7 +15,7 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
-import com.ironhorsesoftware.play.silhouette.persistence.model.OAuth2Credentials
+import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.OAuth2Credentials
 
 class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[OAuth2Info]) extends DelegableAuthInfoDAO[OAuth2Info] with Logging {
 

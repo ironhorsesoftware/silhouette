@@ -15,7 +15,7 @@ import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
-import com.ironhorsesoftware.play.silhouette.persistence.model.PasswordCredentials
+import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.PasswordCredentials
 
 class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[PasswordInfo]) extends DelegableAuthInfoDAO[PasswordInfo] with Logging {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]

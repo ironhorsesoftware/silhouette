@@ -1,10 +1,8 @@
-package com.ironhorsesoftware.play.silhouette.persistence.model
+package com.ironhorsesoftware.play.silhouette.persistence.model.authinfo
 
 import scala.util.Try
-
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
-
 import play.api.Logging
 
 case class OAuth2Credentials(
