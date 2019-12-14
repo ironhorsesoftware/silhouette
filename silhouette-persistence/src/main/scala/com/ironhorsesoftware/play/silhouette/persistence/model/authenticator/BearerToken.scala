@@ -1,16 +1,17 @@
 package com.ironhorsesoftware.play.silhouette.persistence.model.authenticator
 
-import java.sql.Time
-import java.sql.Timestamp
+import java.sql.{Time, Timestamp}
 
-import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
+import scala.concurrent.duration.FiniteDuration
 
 import org.joda.time.{Instant, DateTime, DateTimeZone}
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.authenticators.BearerTokenAuthenticator
 
-case class BearerToken(
+import com.ironhorsesoftware.play.silhouette.persistence.utils.DateTimeConverters
+
+case class BearerToken (
     id : Int,
     authenticatorId : String,
     providerId : String,
@@ -20,13 +21,26 @@ case class BearerToken(
     idleTimeout : Option[FiniteDuration]
 ) {
 
-  def loginInfo = LoginInfo(providerId, providerKey)
-
   def toBearerTokenAuthenticator =
-    new BearerTokenAuthenticator(authenticatorId, LoginInfo(providerId, providerKey), lastUsedDateTime, expirationDateTime, idleTimeout)
+    new BearerTokenAuthenticator(
+        authenticatorId,
+        LoginInfo(providerId, providerKey),
+        lastUsedDateTime,
+        expirationDateTime,
+        idleTimeout)
 }
 
 object BearerToken extends Function7[Int, String, String, String, DateTime, DateTime, Option[FiniteDuration], BearerToken] {
+
+  def apply(authenticator : BearerTokenAuthenticator) =
+    new BearerToken(
+        0,
+        authenticator.id,
+        authenticator.loginInfo.providerID,
+        authenticator.loginInfo.providerKey,
+        authenticator.lastUsedDateTime,
+        authenticator.expirationDateTime,
+        authenticator.idleTimeout)
 
   def fromDatabaseRecord(
       id : Int,
@@ -42,9 +56,9 @@ object BearerToken extends Function7[Int, String, String, String, DateTime, Date
         authenticatorId,
         providerId,
         providerKey,
-        timestampToDateTime(lastUsedDateTime),
-        timestampToDateTime(expirationDateTime),
-        idleTimeout.map(it => FiniteDuration(it.getTime(), MILLISECONDS)))
+        DateTimeConverters.timestampToDateTime(lastUsedDateTime),
+        DateTimeConverters.timestampToDateTime(expirationDateTime),
+        idleTimeout.map(DateTimeConverters.timeToFiniteDuration))
   }
 
   def toDatabaseRecord(bearerToken : BearerToken) = {
@@ -52,16 +66,8 @@ object BearerToken extends Function7[Int, String, String, String, DateTime, Date
         bearerToken.authenticatorId,
         bearerToken.providerId,
         bearerToken.providerKey,
-        dateTimeToTimestamp(bearerToken.lastUsedDateTime),
-        dateTimeToTimestamp(bearerToken.expirationDateTime),
-        bearerToken.idleTimeout.map(it => new Time(it.toMillis)))
-  }
-
-  private def timestampToDateTime(ts : Timestamp) = {
-    Instant.ofEpochMilli(ts.getTime).toDateTime().withZone(DateTimeZone.UTC)
-  }
-
-  private def dateTimeToTimestamp(dt : DateTime) = {
-    new Timestamp(dt.toInstant.getMillis)
+        DateTimeConverters.dateTimeToTimestamp(bearerToken.lastUsedDateTime),
+        DateTimeConverters.dateTimeToTimestamp(bearerToken.expirationDateTime),
+        bearerToken.idleTimeout.map(DateTimeConverters.durationToTime))
   }
 }
