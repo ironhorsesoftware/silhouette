@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.impl.providers.{OAuth1Info, OAuth2Info, OpenID
 import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepository
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickPasswordInfoDAO}
-import com.ironhorsesoftware.play.silhouette.persistence.daos.authinfo.SlickCasInfoDAO
+import com.ironhorsesoftware.play.silhouette.persistence.daos.SlickCasInfoDAO
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOAuth1InfoDAO, SlickOAuth2InfoDAO}
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOpenIdDAO, SlickGoogleTotpInfoDAO}
 import scala.concurrent.ExecutionContext.Implicits.global
