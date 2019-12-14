@@ -17,6 +17,7 @@ lazy val root = (project in file ("."))
 	.settings(
 		name := "root",
 		crossScalaVersions := Seq(scala213, scala212, scala211),
+		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		publishLocal := {},
 		publishM2 := {},
 		publishArtifact := false
@@ -26,6 +27,7 @@ lazy val silhouette = (project in file("silhouette"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette",
+		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		maintainer := projectMaintainer,
 		libraryDependencies ++= Seq(
 		  "com.typesafe.play"      %% "play-ws"                         % playVersion,
@@ -39,6 +41,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
+		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		maintainer := projectMaintainer,
 		libraryDependencies ++= Seq(
 		    "com.mohiva"           %% "play-silhouette"               % silhouetteVersion,
