@@ -55,9 +55,37 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
     result
   }
 
-  def find(id : String) : Future[Option[CookieAuthenticator]] = Future.failed(new UnsupportedOperationException)
+  def find(id : String) : Future[Option[CookieAuthenticator]] = db.run {
+    tokens.filter(_.authenticatorId === id).result.headOption.map(r => r.map { t =>
+      t.toCookieAuthenticator
+    })
+  }
 
-  def remove(id : String) : Future[Unit] = Future.failed(new UnsupportedOperationException)
+  def remove(id : String) : Future[Unit] = db.run {
+    val q =  for { tkn <- tokens if tkn.authenticatorId === id } yield tkn
+    q.delete.map(_ => Unit)
+  }
 
-  def update(authenticator : CookieAuthenticator) : Future[CookieAuthenticator] = Future.failed(new UnsupportedOperationException)
+  def update(authenticator : CookieAuthenticator) : Future[CookieAuthenticator] = db.run {
+    val authenticatorToken = Cookie(authenticator)
+
+    for {
+      numRowsAffected <- tokens.filter(_.authenticatorId === authenticatorToken.authenticatorId).map { token =>
+          (token.providerId, token.providerKey, token.lastUsedDateTime, token.expirationDateTime, token.idleTimeout, token.maxAge, token.fingerprint)
+        }.update(
+            (authenticatorToken.providerId,
+                authenticatorToken.providerKey,
+                DateTimeConverters.dateTimeToTimestamp(authenticatorToken.lastUsedDateTime),
+                DateTimeConverters.dateTimeToTimestamp(authenticatorToken.expirationDateTime),
+                authenticatorToken.idleTimeout.map(DateTimeConverters.durationToTime),
+                authenticatorToken.maxAge.map(DateTimeConverters.durationToTime),
+                authenticatorToken.fingerprint
+            )
+        )
+      result <- numRowsAffected match {
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No authenticators were found with ID ${authenticatorToken.authenticatorId}."))
+          case n => DBIO.successful(authenticator)
+        }
+    } yield result
+  }
 }
