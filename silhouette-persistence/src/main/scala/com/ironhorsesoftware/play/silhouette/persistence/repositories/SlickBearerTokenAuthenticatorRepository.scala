@@ -16,6 +16,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthenticatorRepository
 import com.mohiva.play.silhouette.impl.authenticators.BearerTokenAuthenticator
 
 import com.ironhorsesoftware.play.silhouette.persistence.model.authenticator.BearerToken
+import com.ironhorsesoftware.play.silhouette.persistence.utils.DateTimeConverters
 
 class SlickBearerTokenAuthenticatorRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends AuthenticatorRepository[BearerTokenAuthenticator] {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
@@ -35,11 +36,52 @@ class SlickBearerTokenAuthenticatorRepository @Inject()(protected val dbConfigPr
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout) <> (BearerToken.fromDatabaseRecord, BearerToken.toDatabaseRecord)
   }
 
-  def add(authenticator : BearerTokenAuthenticator) = Future.failed(new UnsupportedOperationException)
+  private val tokens = TableQuery[DbBearerToken]
 
-  def find(id : String) = Future.failed(new UnsupportedOperationException)
+  def add(authenticator : BearerTokenAuthenticator) : Future[BearerTokenAuthenticator] = {
+    val result =
+      db.run {
+        tokens.filter(token => token.authenticatorId === authenticator.id).result.headOption.flatMap {
+          case Some(existingAuthenticator) => DBIO.successful(existingAuthenticator.toBearerTokenAuthenticator)
+          case None => {
+            for {
+              _ <- tokens += BearerToken(authenticator)
+            } yield authenticator
+          }
+        }
+      }
+    result
+  }
 
-  def remove(id : String) = Future.failed(new UnsupportedOperationException)
+  def find(id : String) : Future[Option[BearerTokenAuthenticator]] = db.run {
+    tokens.filter(_.authenticatorId === id).result.headOption.map(r => r.map { t =>
+      t.toBearerTokenAuthenticator
+    })
+  }
 
-  def update(authenticator : BearerTokenAuthenticator) = Future.failed(new UnsupportedOperationException)
+  def remove(id : String) : Future[Unit] = db.run {
+    val q =  for { tkn <- tokens if tkn.authenticatorId === id } yield tkn
+    q.delete.map(_ => Unit)
+  }
+
+  def update(authenticator : BearerTokenAuthenticator) : Future[BearerTokenAuthenticator] = db.run {
+    val bearerToken = BearerToken(authenticator)
+
+    for {
+      numRowsAffected <- tokens.filter(_.authenticatorId === bearerToken.authenticatorId).map { token =>
+          (token.providerId, token.providerKey, token.lastUsedDateTime, token.expirationDateTime, token.idleTimeout)
+        }.update(
+            (bearerToken.providerId,
+                bearerToken.providerKey,
+                DateTimeConverters.dateTimeToTimestamp(bearerToken.lastUsedDateTime),
+                DateTimeConverters.dateTimeToTimestamp(bearerToken.expirationDateTime),
+                bearerToken.idleTimeout.map(DateTimeConverters.durationToTime)
+            )
+        )
+      result <- numRowsAffected match {
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No authenticators were found with ID ${bearerToken.authenticatorId}."))
+          case n => DBIO.successful(authenticator)
+        }
+    } yield result
+  }
 }
