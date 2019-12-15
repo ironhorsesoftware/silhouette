@@ -35,7 +35,20 @@ class SlickOAuth1InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   private val credentials = TableQuery[DbOAuth1Credentials]
 
-  def add(loginInfo : LoginInfo, authInfo : OAuth1Info) : Future[OAuth1Info] = Future.failed(new UnsupportedOperationException)
+  def add(loginInfo : LoginInfo, authInfo : OAuth1Info) : Future[OAuth1Info] = {
+    val result =
+      db.run {
+        credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
+          case Some(credentials) => DBIO.successful(credentials.oauth1Info)
+          case None => {
+            for {
+              _ <- credentials += OAuth1Credentials(loginInfo, authInfo)
+            } yield authInfo
+          }
+        }
+      }
+    result
+  }
 
   def find(loginInfo : LoginInfo) : Future[Option[OAuth1Info]] = Future.failed(new UnsupportedOperationException)
 

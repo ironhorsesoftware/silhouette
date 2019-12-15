@@ -29,7 +29,20 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
 
   private val credentials = TableQuery[DbCasCredentials]
 
-  def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = Future.failed(new UnsupportedOperationException)
+  def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = {
+    val result =
+      db.run {
+        credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
+          case Some(credentials) => DBIO.successful(credentials.casInfo)
+          case None => {
+            for {
+              _ <- credentials += CasCredentials(loginInfo, authInfo)
+            } yield authInfo
+          }
+        }
+      }
+    result
+  }
 
   def find(loginInfo : LoginInfo) : Future[Option[CasInfo]] = Future.failed(new UnsupportedOperationException)
 

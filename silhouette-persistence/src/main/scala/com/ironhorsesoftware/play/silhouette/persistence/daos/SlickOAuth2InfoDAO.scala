@@ -39,10 +39,19 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   private val credentials = TableQuery[DbOAuth2Credentials]
 
-  def add(loginInfo : LoginInfo, authInfo : OAuth2Info) : Future[OAuth2Info] = db.run {
-    for {
-      _ <- (credentials += OAuth2Credentials(loginInfo, authInfo))
-    } yield authInfo
+  def add(loginInfo : LoginInfo, authInfo : OAuth2Info) : Future[OAuth2Info] = {
+    val result =
+      db.run {
+        credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
+          case Some(credentials) => DBIO.successful(credentials.oauth2Info)
+          case None => {
+            for {
+              _ <- credentials += OAuth2Credentials(loginInfo, authInfo)  
+            } yield authInfo
+          }
+        }
+      }
+    result
   }
 
   def find(loginInfo : LoginInfo) : Future[Option[OAuth2Info]] = db.run {
