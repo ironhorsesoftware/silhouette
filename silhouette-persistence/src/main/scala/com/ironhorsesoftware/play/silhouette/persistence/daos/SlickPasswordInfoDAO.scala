@@ -85,7 +85,7 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
           (creds.password, creds.passwordHasher, creds.passwordSalt)
         }.update((authInfo.password, authInfo.hasher, authInfo.salt))
       result <- numRowsAffected match {
-          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}"))
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
           case _ => DBIO.successful(authInfo)
         }
     } yield result
