@@ -16,6 +16,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthenticatorRepository
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 
 import com.ironhorsesoftware.play.silhouette.persistence.model.authenticator.Cookie
+import com.ironhorsesoftware.play.silhouette.persistence.utils.DateTimeConverters
 
 class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends AuthenticatorRepository[CookieAuthenticator] {
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
@@ -23,7 +24,7 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
   import dbConfig._
   import profile.api._
 
-  private class DbBearerToken(tag : Tag) extends Table[Cookie](tag, "authentication_cookies") {
+  private class DbCookie(tag : Tag) extends Table[Cookie](tag, "authentication_cookies") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def authenticatorId = column[String]("authenticator_id")
     def providerId = column[String]("provider_id")
@@ -37,11 +38,26 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout, maxAge, fingerprint) <> (Cookie.fromDatabaseRecord, Cookie.toDatabaseRecord)
   }
 
-  def add(authenticator : CookieAuthenticator) = Future.failed(new UnsupportedOperationException)
+  private val tokens = TableQuery[DbCookie]
 
-  def find(id : String) = Future.failed(new UnsupportedOperationException)
+  def add(authenticator : CookieAuthenticator) : Future[CookieAuthenticator] = {
+    val result =
+      db.run {
+        tokens.filter(token => token.authenticatorId === authenticator.id).result.headOption.flatMap {
+          case Some(existingAuthenticator) => DBIO.successful(existingAuthenticator.toCookieAuthenticator)
+          case None => {
+            for {
+              _ <- tokens += Cookie(authenticator)
+            } yield authenticator
+          }
+        }
+      }
+    result
+  }
 
-  def remove(id : String) = Future.failed(new UnsupportedOperationException)
+  def find(id : String) : Future[Option[CookieAuthenticator]] = Future.failed(new UnsupportedOperationException)
 
-  def update(authenticator : CookieAuthenticator) = Future.failed(new UnsupportedOperationException)
+  def remove(id : String) : Future[Unit] = Future.failed(new UnsupportedOperationException)
+
+  def update(authenticator : CookieAuthenticator) : Future[CookieAuthenticator] = Future.failed(new UnsupportedOperationException)
 }

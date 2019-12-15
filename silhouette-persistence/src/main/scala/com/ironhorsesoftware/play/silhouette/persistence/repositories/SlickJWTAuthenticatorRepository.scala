@@ -37,11 +37,13 @@ class SlickJWTAuthenticatorRepository @Inject()(protected val dbConfigProvider: 
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout, customClaims) <> (JWT.fromDatabaseRecord, JWT.toDatabaseRecord)
   }
 
-  def add(authenticator : JWTAuthenticator) = Future.failed(new UnsupportedOperationException)
+  private val tokens = TableQuery[DbJWT]
 
-  def find(id : String) = Future.failed(new UnsupportedOperationException)
+  def add(authenticator : JWTAuthenticator) : Future[JWTAuthenticator] = Future.failed(new UnsupportedOperationException)
 
-  def remove(id : String) = Future.failed(new UnsupportedOperationException)
+  def find(id : String) : Future[Option[JWTAuthenticator]] = Future.failed(new UnsupportedOperationException)
 
-  def update(authenticator : JWTAuthenticator) = Future.failed(new UnsupportedOperationException)
+  def remove(id : String) : Future[Unit] = Future.failed(new UnsupportedOperationException)
+
+  def update(authenticator : JWTAuthenticator) : Future[JWTAuthenticator] = Future.failed(new UnsupportedOperationException)
 }
