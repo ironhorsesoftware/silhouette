@@ -30,7 +30,7 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
 
   private val credentials = TableQuery[DbGoogleTotpCredentials]
 
-  private class DbGoogleTotpScratchCodes(tag : Tag) extends Table[GoogleTotpScratchCode](tag, "openid_attributes") {
+  private class DbGoogleTotpScratchCodes(tag : Tag) extends Table[GoogleTotpScratchCode](tag, "credentials_totp_google_scratch_codes") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def googleTotpId = column[Int]("google_totp_id")
     def hasher = column[String]("hasher")
