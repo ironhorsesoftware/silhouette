@@ -92,9 +92,24 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
   }
 
   def update(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
+    // 1. Find the corresponding ID
+    val credIdOptFuture =
+      db.run {
+        credentials.filter(cred => cred.providerId === loginInfo.providerID && cred.providerKey === loginInfo.providerKey).map(_.id).result.headOption
+      }
 
-
-    Future.failed(new UnsupportedOperationException)
+    // 2. Delete & re-insert the corresponding scratch tokens, then update the shared key.
+    credIdOptFuture.flatMap(credIdOpt => credIdOpt match {
+      case Some(totpId) => {
+        val delete = (for { sc <- scratchCodes if sc.googleTotpId === totpId } yield sc).delete
+        val insert = scratchCodes ++= authInfo.scratchCodes.map(scratchCode => GoogleTotpScratchCode(totpId, scratchCode))
+        val update = credentials.filter(_.id === totpId).map(_.sharedKey).update(authInfo.sharedKey)
+        db.run {
+          DBIO.sequence(Seq(delete, insert, update)).transactionally
+        }.map(_ => authInfo)
+      }
+      case None => Future.failed(new IllegalStateException(s"Cannot find a GoogleTotpInfo to update with the credentials ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
+    })
   }
 
   private def insert(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
