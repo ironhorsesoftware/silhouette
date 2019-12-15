@@ -19,7 +19,7 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
   import dbConfig._
   import profile.api._
 
-  private class DbGoogleTotpCredentials(tag : Tag) extends Table[GoogleTotpCredentials](tag, "credentials_googletotp") {
+  private class DbGoogleTotpCredentials(tag : Tag) extends Table[GoogleTotpCredentials](tag, "credentials_totp_google") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -44,9 +44,24 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
 
   private val attributes = TableQuery[DbGoogleTotpScratchCodes]  
 
-  def add(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = Future.failed(new UnsupportedOperationException)
+  def add(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
+    find(loginInfo).flatMap { result =>
+      result match {
+        case Some(authInfo) => Future.successful(authInfo)
+        case None => insert(loginInfo, authInfo)
+      }
+    }
+  }
 
-  def find(loginInfo : LoginInfo) : Future[Option[GoogleTotpInfo]] = Future.failed(new UnsupportedOperationException)
+  def find(loginInfo : LoginInfo) : Future[Option[GoogleTotpInfo]] = db.run {
+    credentials.join(attributes).on(_.id === _.googleTotpId).filter { case (creds, attrs) =>
+      creds.providerId === loginInfo.providerID && creds.providerKey === loginInfo.providerKey
+    }.result.map { rows =>
+      rows.groupBy { case (creds, attrs) =>
+        creds
+      }.mapValues(values => values.map { case (creds, attrs) => attrs })
+    }.map(result => result.map { case (creds, attrs) => GoogleTotpCredentials.buildAuthInfo(creds, attrs) })
+  }.map(_.headOption)
 
   def remove(loginInfo : LoginInfo) : Future[Unit] = Future.failed(new UnsupportedOperationException)
 
@@ -54,4 +69,18 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
 
   def update(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = Future.failed(new UnsupportedOperationException)
 
+  private def insert(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
+    val creds = GoogleTotpCredentials(loginInfo, authInfo)
+
+    db.run {
+      for {
+        credId <- (credentials returning credentials.map(_.id)) += creds
+        scratchCodes = authInfo.scratchCodes.map(scratchCode => GoogleTotpScratchCode(credId, scratchCode))
+        // TODO: Add the scratch codes to the database.
+      } yield credId
+    }
+
+    val scratchCodes = authInfo.scratchCodes.map(scratchCode => GoogleTotpScratchCode(0, scratchCode))
+    Future.failed(new UnsupportedOperationException)
+  }
 }
