@@ -82,9 +82,20 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
     })
   }
 
-  def save(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = Future.failed(new UnsupportedOperationException)
+  def save(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
+    find(loginInfo).flatMap { result =>
+      result match {
+        case Some(existingAuthInfo) => update(loginInfo, authInfo)
+        case None => insert(loginInfo, authInfo)
+      }
+    }
+  }
 
-  def update(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = Future.failed(new UnsupportedOperationException)
+  def update(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
+
+
+    Future.failed(new UnsupportedOperationException)
+  }
 
   private def insert(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
     val result =
