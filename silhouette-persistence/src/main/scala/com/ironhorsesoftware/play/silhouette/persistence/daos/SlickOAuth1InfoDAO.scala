@@ -23,7 +23,7 @@ class SlickOAuth1InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
   import dbConfig._
   import profile.api._
 
-  private class DbOAuth1Credentials(tag : Tag) extends Table[OAuth1Credentials](tag, "oauth1_credentials") {
+  private class DbOAuth1Credentials(tag : Tag) extends Table[OAuth1Credentials](tag, "credentials_oauth1") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")

@@ -23,7 +23,7 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
   import dbConfig._
   import profile.api._
 
-  private class DbPasswordCredentials(tag : Tag) extends Table[PasswordCredentials](tag, "password_credentials") {
+  private class DbPasswordCredentials(tag : Tag) extends Table[PasswordCredentials](tag, "credentials_password") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")

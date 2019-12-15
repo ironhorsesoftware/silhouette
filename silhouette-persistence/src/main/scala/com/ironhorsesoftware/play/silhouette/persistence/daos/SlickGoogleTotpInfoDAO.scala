@@ -19,7 +19,7 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
   import dbConfig._
   import profile.api._
 
-  private class DbGoogleTotpCredentials(tag : Tag) extends Table[GoogleTotpCredentials](tag, "openid_credentials") {
+  private class DbGoogleTotpCredentials(tag : Tag) extends Table[GoogleTotpCredentials](tag, "credentials_googletotp") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")

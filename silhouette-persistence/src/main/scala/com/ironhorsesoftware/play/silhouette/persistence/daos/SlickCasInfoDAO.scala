@@ -18,7 +18,7 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   import dbConfig._
   import profile.api._
 
-  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "cas_credentials") {
+  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
