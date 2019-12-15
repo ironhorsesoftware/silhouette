@@ -50,29 +50,21 @@ object Cookie extends Function9[Int, String, String, String, DateTime, DateTime,
         authenticator.fingerprint)
 
   def fromDatabaseRecord(
-      id : Int,
-      authenticatorId : String,
-      providerId : String,
-      providerKey : String,
-      lastUsedDateTime : Timestamp,
-      expirationDateTime : Timestamp,
-      idleTimeout : Option[Time],
-      maxAge : Option[Time],
-      fingerprint : Option[String]) = {
+      record : (Int, String, String, String, Timestamp, Timestamp, Option[Time], Option[Time], Option[String])) = {
 
     new Cookie(
-        id,
-        authenticatorId,
-        providerId,
-        providerKey,
-        DateTimeConverters.timestampToDateTime(lastUsedDateTime),
-        DateTimeConverters.timestampToDateTime(expirationDateTime),
-        idleTimeout.map(DateTimeConverters.timeToFiniteDuration),
-        maxAge.map(DateTimeConverters.timeToFiniteDuration),
-        fingerprint)
+        record._1,
+        record._2,
+        record._3,
+        record._4,
+        DateTimeConverters.timestampToDateTime(record._5),
+        DateTimeConverters.timestampToDateTime(record._6),
+        record._7.map(DateTimeConverters.timeToFiniteDuration),
+        record._8.map(DateTimeConverters.timeToFiniteDuration),
+        record._9)
   }
 
-  def toDatabaseRecord(cookie : Cookie) = {
+  def toDatabaseRecord(cookie : Cookie) = Some(
     (cookie.id,
         cookie.authenticatorId,
         cookie.providerId,
@@ -81,6 +73,5 @@ object Cookie extends Function9[Int, String, String, String, DateTime, DateTime,
         DateTimeConverters.dateTimeToTimestamp(cookie.expirationDateTime),
         cookie.idleTimeout.map(DateTimeConverters.durationToTime),
         cookie.maxAge.map(DateTimeConverters.durationToTime),
-        cookie.fingerprint)
-  }
+        cookie.fingerprint))
 }
