@@ -2,9 +2,9 @@ package com.ironhorsesoftware.play.silhouette.persistence.model.authenticator
 
 import java.sql.{Time, Timestamp}
 
-import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
+import scala.concurrent.duration.FiniteDuration
 
-import org.joda.time.{Instant, DateTime, DateTimeZone}
+import org.joda.time.DateTime
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
