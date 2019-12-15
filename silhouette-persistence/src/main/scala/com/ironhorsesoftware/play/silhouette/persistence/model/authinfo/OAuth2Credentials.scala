@@ -2,12 +2,10 @@ package com.ironhorsesoftware.play.silhouette.persistence.model.authinfo
 
 import scala.util.Try
 
-import play.api.libs.json._
-
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.OAuth2Info
 
-import play.api.Logging
+import com.ironhorsesoftware.play.silhouette.persistence.utils.Serializers
 
 case class OAuth2Credentials(
     id : Int,
@@ -21,10 +19,10 @@ case class OAuth2Credentials(
 
   def loginInfo = LoginInfo(providerId, providerKey)
 
-  def oauth2Info = OAuth2Info(accessToken, tokenType, expiresIn, refreshToken, params.map(OAuth2Credentials.stringToParams))
+  def oauth2Info = OAuth2Info(accessToken, tokenType, expiresIn, refreshToken, params.map(Serializers.deserializeMapFromString))
 }
 
-object OAuth2Credentials extends Function8[Int, String, String, String, Option[String], Option[Int], Option[String], Option[String], OAuth2Credentials] with Logging {
+object OAuth2Credentials extends Function8[Int, String, String, String, Option[String], Option[Int], Option[String], Option[String], OAuth2Credentials] {
   def apply(loginInfo : LoginInfo, oauth2Info : OAuth2Info) : OAuth2Credentials = {
 
     OAuth2Credentials(
@@ -35,16 +33,6 @@ object OAuth2Credentials extends Function8[Int, String, String, String, Option[S
         oauth2Info.tokenType,
         oauth2Info.expiresIn,
         oauth2Info.refreshToken,
-        oauth2Info.params.map(paramsToString))
-  }
-
-  def paramsToString(params : Map[String, String]) = {
-    Json.toJson(params).toString
-  }
-
-  def stringToParams(str : String) : Map[String, String] = {
-    Json.parse(str).as[JsObject].value.map { case (key, value) =>
-      (key, value.toString)
-    }.toMap
+        oauth2Info.params.map(Serializers.serializeMapToString))
   }
 }
