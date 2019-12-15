@@ -67,8 +67,8 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
 
     for {
       rowsAffected <- credentials.filter(c => c.providerId === pwdCreds.providerId && c.providerKey === pwdCreds.providerKey).map { pwdCreds =>
-          (pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt)
-        }.update((pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt))
+          (pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt)
+        }.update((pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt))
       result <- rowsAffected match {
           case 0 => credentials += pwdCreds
           case n => DBIO.successful(n)

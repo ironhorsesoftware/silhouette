@@ -70,8 +70,8 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
 
     for {
       rowsAffected <- credentials.filter(c => c.providerId === oauth2Creds.providerId && c.providerKey === oauth2Creds.providerKey).map { oauth2Creds =>
-          (oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params)
-        }.update((oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params))
+          (oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params)
+        }.update((oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params))
       result <- rowsAffected match {
           case 0 => credentials += oauth2Creds
           case n => DBIO.successful(n)

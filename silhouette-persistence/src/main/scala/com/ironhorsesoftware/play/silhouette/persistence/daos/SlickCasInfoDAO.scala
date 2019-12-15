@@ -44,11 +44,43 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     result
   }
 
-  def find(loginInfo : LoginInfo) : Future[Option[CasInfo]] = Future.failed(new UnsupportedOperationException)
+  def find(loginInfo : LoginInfo) : Future[Option[CasInfo]] = db.run {
+    credentials.filter(cred => cred.providerKey === loginInfo.providerKey && cred.providerId === loginInfo.providerID).result.headOption.map ( r => r.map { c =>
+      c.casInfo
+    })
+  }
 
-  def remove(loginInfo : LoginInfo) : Future[Unit] = Future.failed(new UnsupportedOperationException)
+  def remove(loginInfo : LoginInfo) : Future[Unit] = db.run {
+    val q = for { creds <- credentials if creds.providerId === loginInfo.providerID && creds.providerKey === loginInfo.providerKey } yield creds
+    q.delete.map(_ => Unit)
+  }
 
-  def save(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = Future.failed(new UnsupportedOperationException)
+  def save(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = db.run {
+    val authCreds = CasCredentials(loginInfo, authInfo)
 
-  def update(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = Future.failed(new UnsupportedOperationException)
+    for {
+      rowsAffected <- credentials.filter(c => c.providerId === authCreds.providerId && c.providerKey === authCreds.providerKey).map { casCreds =>
+          casCreds.ticket
+        }.update(authCreds.ticket)
+      result <- rowsAffected match {
+          case 0 => credentials += authCreds
+          case n => DBIO.successful(n)
+        }
+      queryResult <- credentials.filter(cred => cred.providerKey === authCreds.providerKey && cred.providerId === authCreds.providerId).result.head.map { c =>
+        c.casInfo
+      }
+    } yield queryResult
+  }
+
+  def update(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = db.run {
+    for {
+      numRowsAffected <- credentials.filter(cred => cred.providerId === loginInfo.providerID && cred.providerKey === loginInfo.providerKey).map { creds =>
+          creds.ticket
+        }.update(authInfo.ticket)
+      result <- numRowsAffected match {
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
+          case _ => DBIO.successful(authInfo)
+        }
+    } yield result
+  }
 }
