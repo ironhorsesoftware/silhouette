@@ -24,7 +24,7 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
   import dbConfig._
   import profile.api._
 
-  private class DbOAuth2Credentials(tag : Tag) extends Table[OAuth2Credentials](tag, "oauth2_credentials") {
+  private class DbOAuth2Credentials(tag : Tag) extends Table[OAuth2Credentials](tag, "credentials_oauth2") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -32,17 +32,26 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
     def tokenType = column[Option[String]]("token_type")
     def expiresIn = column[Option[Int]]("expires_in")
     def refreshToken = column[Option[String]]("refresh_token")
+    def params = column[Option[String]]("params")
 
-    def * = (id, providerId, providerKey, accessToken, tokenType, expiresIn, refreshToken) <> (OAuth2Credentials.tupled, OAuth2Credentials.unapply)
+    def * = (id, providerId, providerKey, accessToken, tokenType, expiresIn, refreshToken, params) <> (OAuth2Credentials.tupled, OAuth2Credentials.unapply)
   }
 
   private val credentials = TableQuery[DbOAuth2Credentials]
 
-  def add(loginInfo : LoginInfo, authInfo : OAuth2Info) : Future[OAuth2Info] = db.run {
-    // TODO: Return an OAuth2Info that knows its database ID.
-    for {
-      _ <- (credentials += OAuth2Credentials(loginInfo, authInfo))
-    } yield authInfo
+  def add(loginInfo : LoginInfo, authInfo : OAuth2Info) : Future[OAuth2Info] = {
+    val result =
+      db.run {
+        credentials.filter(creds => creds.providerKey === loginInfo.providerKey && creds.providerId === loginInfo.providerID).result.headOption.flatMap {
+          case Some(credentials) => DBIO.successful(credentials.oauth2Info)
+          case None => {
+            for {
+              _ <- credentials += OAuth2Credentials(loginInfo, authInfo)  
+            } yield authInfo
+          }
+        }
+      }
+    result
   }
 
   def find(loginInfo : LoginInfo) : Future[Option[OAuth2Info]] = db.run {
@@ -52,8 +61,7 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
   }
 
   def remove(loginInfo : LoginInfo) : Future[Unit] = db.run {
-    // TODO: Take another look at this one ...
-    val q = for { creds <- credentials if creds.providerKey === loginInfo.providerKey } yield creds
+    val q = for { creds <- credentials if creds.providerId === loginInfo.providerID && creds.providerKey === loginInfo.providerKey } yield creds
     q.delete.map(_ => Unit)
   }
 
@@ -62,8 +70,8 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
 
     for {
       rowsAffected <- credentials.filter(c => c.providerId === oauth2Creds.providerId && c.providerKey === oauth2Creds.providerKey).map { oauth2Creds =>
-          (oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken)
-        }.update((oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken))
+          (oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params)
+        }.update((oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params))
       result <- rowsAffected match {
           case 0 => credentials += oauth2Creds
           case n => DBIO.successful(n)
@@ -74,10 +82,17 @@ class SlickOAuth2InfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
     } yield queryResult
   }
 
-  // TODO: This is very wrong.
   def update(loginInfo : LoginInfo, authInfo : OAuth2Info) : Future[OAuth2Info] = db.run {
+    val oauth2Creds = OAuth2Credentials(loginInfo, authInfo)
+
     for {
-      _ <- credentials.update(OAuth2Credentials(loginInfo, authInfo))
-    } yield authInfo
+      rowsAffected <- credentials.filter(c => c.providerId === oauth2Creds.providerId && c.providerKey === oauth2Creds.providerKey).map { oauth2Creds =>
+          (oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params)
+        }.update((oauth2Creds.providerId, oauth2Creds.providerKey, oauth2Creds.accessToken, oauth2Creds.tokenType, oauth2Creds.expiresIn, oauth2Creds.refreshToken, oauth2Creds.params))
+      result <- rowsAffected match {
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
+          case n => DBIO.successful(authInfo)
+        }
+    } yield result
   }
 }

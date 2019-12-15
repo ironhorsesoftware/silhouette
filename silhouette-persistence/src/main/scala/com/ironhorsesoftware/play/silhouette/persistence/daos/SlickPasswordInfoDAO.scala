@@ -23,7 +23,7 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
   import dbConfig._
   import profile.api._
 
-  private class DbPasswordCredentials(tag : Tag) extends Table[PasswordCredentials](tag, "password_credentials") {
+  private class DbPasswordCredentials(tag : Tag) extends Table[PasswordCredentials](tag, "credentials_password") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -67,8 +67,8 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
 
     for {
       rowsAffected <- credentials.filter(c => c.providerId === pwdCreds.providerId && c.providerKey === pwdCreds.providerKey).map { pwdCreds =>
-          (pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt)
-        }.update((pwdCreds.providerId, pwdCreds.providerKey, pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt))
+          (pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt)
+        }.update((pwdCreds.password, pwdCreds.passwordHasher, pwdCreds.passwordSalt))
       result <- rowsAffected match {
           case 0 => credentials += pwdCreds
           case n => DBIO.successful(n)
@@ -85,7 +85,7 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
           (creds.password, creds.passwordHasher, creds.passwordSalt)
         }.update((authInfo.password, authInfo.hasher, authInfo.salt))
       result <- numRowsAffected match {
-          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}"))
+          case 0 => DBIO.failed(new IllegalArgumentException(s"No entries were found with provider ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
           case _ => DBIO.successful(authInfo)
         }
     } yield result
