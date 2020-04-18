@@ -11,6 +11,7 @@ lazy val silhouetteVersion = "6.1.1"
 lazy val playVersion = "2.7.3"
 lazy val playSlickVersion = "4.0.2"
 lazy val scalaGuiceVersion = "4.2.6"
+lazy val scalaTestVersion = "3.1.1"
 
 lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
@@ -49,6 +50,8 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 			"com.mohiva"           %% "play-silhouette-persistence"   % silhouetteVersion,
 			"com.mohiva"           %% "play-silhouette-totp"          % silhouetteVersion,
 			"com.typesafe.play"    %% "play-slick"                    % playSlickVersion,
-		    "net.codingwell"       %% "scala-guice"                   % scalaGuiceVersion
+		    "net.codingwell"       %% "scala-guice"                   % scalaGuiceVersion,
+			"org.scalactic"        %% "scalactic"                     % scalaTestVersion,
+			"org.scalatest"        %% "scalatest"                     % scalaTestVersion % "test"
 		)
 	)
