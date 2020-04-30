@@ -13,12 +13,12 @@ import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.CasCrede
 import slick.lifted.ProvenShape.proveShapeOf
 
 class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[CasInfo]) extends DelegableAuthInfoDAO[CasInfo] with Logging {
-  private val dbConfig = dbConfigProvider.get[JdbcProfile]
+  val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
 
-  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
+  class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -27,7 +27,7 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def * = (id, providerId, providerKey, ticket) <> (CasCredentials.tupled, CasCredentials.unapply)
   }
 
-  private val credentials = TableQuery[DbCasCredentials]
+  val credentials = TableQuery[DbCasCredentials]
 
   def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = {
     val result =

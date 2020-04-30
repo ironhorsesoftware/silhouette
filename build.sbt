@@ -52,6 +52,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 			"com.typesafe.play"    %% "play-slick"                    % playSlickVersion,
 		    "net.codingwell"       %% "scala-guice"                   % scalaGuiceVersion,
 			"org.scalactic"        %% "scalactic"                     % scalaTestVersion,
-			"org.scalatest"        %% "scalatest"                     % scalaTestVersion % "test"
+			"org.scalatest"        %% "scalatest"                     % scalaTestVersion % "test",
+			"com.h2database"        % "h2"                            % "1.4.200"        % "test"
 		)
 	)
