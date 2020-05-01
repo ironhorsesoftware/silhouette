@@ -18,7 +18,7 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
   import dbConfig._
   import profile.api._
 
-  class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
+  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -27,7 +27,10 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def * = (id, providerId, providerKey, ticket) <> (CasCredentials.tupled, CasCredentials.unapply)
   }
 
-  val credentials = TableQuery[DbCasCredentials]
+  private val credentials = TableQuery[DbCasCredentials]
+
+  def createSchema() = db.run(credentials.schema.create)
+  def dropSchema() : Future[Unit] = db.run(credentials.schema.drop)
 
   def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = {
     val result =

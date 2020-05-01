@@ -17,7 +17,7 @@ lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
 	.settings(
 		name := "root",
-		crossScalaVersions := Seq(scala213, scala212, scala211),
+		crossScalaVersions := Seq(scala213,scala212,scala211),
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		publishLocal := {},
 		publishM2 := {},
@@ -45,14 +45,15 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		maintainer := projectMaintainer,
 		libraryDependencies ++= Seq(
-		    "com.mohiva"           %% "play-silhouette"               % silhouetteVersion,
-			"com.mohiva"           %% "play-silhouette-cas"           % silhouetteVersion,
-			"com.mohiva"           %% "play-silhouette-persistence"   % silhouetteVersion,
-			"com.mohiva"           %% "play-silhouette-totp"          % silhouetteVersion,
-			"com.typesafe.play"    %% "play-slick"                    % playSlickVersion,
-		    "net.codingwell"       %% "scala-guice"                   % scalaGuiceVersion,
-			"org.scalactic"        %% "scalactic"                     % scalaTestVersion,
-			"org.scalatest"        %% "scalatest"                     % scalaTestVersion % "test",
-			"com.h2database"        % "h2"                            % "1.4.200"        % "test"
+		    "com.mohiva"             %% "play-silhouette"               % silhouetteVersion,
+			"com.mohiva"             %% "play-silhouette-cas"           % silhouetteVersion,
+			"com.mohiva"             %% "play-silhouette-persistence"   % silhouetteVersion,
+			"com.mohiva"             %% "play-silhouette-totp"          % silhouetteVersion,
+			"com.typesafe.play"      %% "play-slick"                    % playSlickVersion,
+		    "net.codingwell"         %% "scala-guice"                   % scalaGuiceVersion,
+			"org.scalactic"          %% "scalactic"                     % scalaTestVersion,
+			"org.scalatest"          %% "scalatest"                     % scalaTestVersion % Test,
+			"org.scalatestplus.play" %% "scalatestplus-play"            % "3.1.2"          % Test,
+			"com.h2database"          % "h2"                            % "1.4.200"        % Test,
 		)
 	)
