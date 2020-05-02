@@ -40,6 +40,9 @@ class SlickJWTAuthenticatorRepository @Inject()(protected val dbConfigProvider: 
 
   private val tokens = TableQuery[DbJWT]
 
+  def createSchema() = db.run(tokens.schema.create)
+  def dropSchema() : Future[Unit] = db.run(tokens.schema.drop)
+
   def add(authenticator : JWTAuthenticator) : Future[JWTAuthenticator] = {
     val result =
       db.run {
