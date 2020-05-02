@@ -22,31 +22,41 @@ class SlickCASInfoDAOSpec extends Specification {
     "work as expected" in new WithApplicationLoader {
 
       val app2dao = Application.instanceCache[SlickCasInfoDAO]
-      val casInfoDAO: SlickCasInfoDAO = app2dao(app)
+      val authInfoDAO: SlickCasInfoDAO = app2dao(app)
       val loginInfo = LoginInfo("providerId", "key")
       val authInfo = CasInfo("token")
 
-      Await.result(casInfoDAO.createSchema(), 10 seconds)
+      Await.result(authInfoDAO.createSchema(), 10 seconds)
 
-      val createdCasInfo = Await.result(casInfoDAO.add(loginInfo, authInfo), 1 second)
-      createdCasInfo mustEqual authInfo         
+      val createdAuthInfo = Await.result(authInfoDAO.add(loginInfo, authInfo), 1 second)
+      createdAuthInfo mustEqual authInfo         
 
-      val foundCasInfoOption = Await.result(casInfoDAO.find(loginInfo), 1  second)      
-      foundCasInfoOption mustEqual Some(authInfo)
+      val foundAuthInfoOption = Await.result(authInfoDAO.find(loginInfo), 1  second)      
+      foundAuthInfoOption mustEqual Some(authInfo)
 
-      val updatedCasInfo = CasInfo("newToken")
+      val updatedAuthInfo = CasInfo("updatedToken")
 
-      val savedCasInfo = Await.result(casInfoDAO.save(loginInfo, updatedCasInfo), 1 second)
-      savedCasInfo mustEqual updatedCasInfo
+      val savedAuthInfo = Await.result(authInfoDAO.save(loginInfo, updatedAuthInfo), 1 second)
+      savedAuthInfo mustEqual updatedAuthInfo
 
-      val foundUpdatedCasInfo = Await.result(casInfoDAO.find(loginInfo), 1 second)
-      foundUpdatedCasInfo mustEqual Some(updatedCasInfo)
-      
-      Await.result(casInfoDAO.remove(loginInfo), 1 second)
-      val casInfoAfterRemovedOption = Await.result(casInfoDAO.find(loginInfo), 1 second)
-      casInfoAfterRemovedOption mustEqual None
+      val foundUpdatedAuthInfo = Await.result(authInfoDAO.find(loginInfo), 1 second)
+      foundUpdatedAuthInfo mustEqual Some(updatedAuthInfo)
+     
+      Await.result(authInfoDAO.remove(loginInfo), 1 second)
+      val removedAuthInfoOption = Await.result(authInfoDAO.find(loginInfo), 1 second)
+      removedAuthInfoOption mustEqual None
 
-      Await.result(casInfoDAO.dropSchema(), 10 seconds)
+      val newAuthInfo = CasInfo("newToken")
+
+      Await.result(authInfoDAO.update(loginInfo, newAuthInfo), 1 second) must throwA[IllegalArgumentException]
+
+      val newlyCreatedAuthInfo = Await.result(authInfoDAO.save(loginInfo, newAuthInfo), 1 second)
+      newlyCreatedAuthInfo mustEqual newAuthInfo
+
+      val foundNewlyCreatedAuthInfo = Await.result(authInfoDAO.find(loginInfo), 1 second)
+      foundNewlyCreatedAuthInfo mustEqual Some(newAuthInfo)
+
+      Await.result(authInfoDAO.dropSchema(), 10 seconds)
     }
   }
 }
