@@ -40,6 +40,9 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
 
   private val tokens = TableQuery[DbCookie]
 
+  def createSchema() = db.run(tokens.schema.create)
+  def dropSchema() : Future[Unit] = db.run(tokens.schema.drop)
+
   def add(authenticator : CookieAuthenticator) : Future[CookieAuthenticator] = {
     val result =
       db.run {
