@@ -17,7 +17,8 @@ import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
 import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.PasswordCredentials
 
-class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[PasswordInfo]) extends DelegableAuthInfoDAO[PasswordInfo] with Logging {
+class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[PasswordInfo] with Logging {
+  val classTag = scala.reflect.classTag[PasswordInfo]
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -35,6 +36,9 @@ class SlickPasswordInfoDAO @Inject()(protected val dbConfigProvider: DatabaseCon
   }
 
   private val credentials = TableQuery[DbPasswordCredentials]
+
+  def createSchema() = db.run(credentials.schema.create)
+  def dropSchema() : Future[Unit] = db.run(credentials.schema.drop)
 
   def add(loginInfo : LoginInfo, authInfo : PasswordInfo) : Future[PasswordInfo] = {
     val result =
