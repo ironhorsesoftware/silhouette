@@ -14,7 +14,7 @@ import slick.lifted.ProvenShape.proveShapeOf
 
 class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[CasInfo] with Logging {
   val classTag = scala.reflect.classTag[CasInfo]
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
+  private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
