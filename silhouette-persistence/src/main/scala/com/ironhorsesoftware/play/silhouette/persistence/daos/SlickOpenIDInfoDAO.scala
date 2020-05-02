@@ -13,7 +13,8 @@ import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.OpenIdCredentials
 
 
-class SlickOpenIdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, implicit val classTag : ClassTag[OpenIDInfo]) extends DelegableAuthInfoDAO[OpenIDInfo] with Logging {
+class SlickOpenIDInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[OpenIDInfo] with Logging {
+  val classTag = scala.reflect.classTag[OpenIDInfo]
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -30,6 +31,9 @@ class SlickOpenIdDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPro
   }
 
   private val credentials = TableQuery[DbOpenIdCredentials]
+
+  def createSchema() = db.run(credentials.schema.create)
+  def dropSchema() : Future[Unit] = db.run(credentials.schema.drop)
 
   def add(loginInfo : LoginInfo, authInfo : OpenIDInfo) : Future[OpenIDInfo] = {
     val result =
