@@ -16,7 +16,7 @@ import org.specs2.mutable.Specification
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class RackRepositorySpec extends Specification {
+class SlickCASInfoDAOSpec extends Specification {
 
   "SlickCasInfoDAO" should {
     "work as expected" in new WithApplicationLoader {
