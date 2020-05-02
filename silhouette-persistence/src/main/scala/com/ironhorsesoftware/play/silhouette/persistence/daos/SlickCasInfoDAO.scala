@@ -12,13 +12,14 @@ import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.CasCredentials
 import slick.lifted.ProvenShape.proveShapeOf
 
-class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[CasInfo]) extends DelegableAuthInfoDAO[CasInfo] with Logging {
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
+class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[CasInfo] with Logging {
+  val classTag = scala.reflect.classTag[CasInfo]
+  private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
   import profile.api._
 
-  class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
+  private class DbCasCredentials(tag : Tag) extends Table[CasCredentials](tag, "credentials_cas") {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def providerId = column[String]("provider_id")
     def providerKey = column[String]("provider_key")
@@ -27,7 +28,10 @@ class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigPr
     def * = (id, providerId, providerKey, ticket) <> (CasCredentials.tupled, CasCredentials.unapply)
   }
 
-  val credentials = TableQuery[DbCasCredentials]
+  private val credentials = TableQuery[DbCasCredentials]
+
+  def createSchema() = db.run(credentials.schema.create)
+  def dropSchema() : Future[Unit] = db.run(credentials.schema.drop)
 
   def add(loginInfo : LoginInfo, authInfo : CasInfo) : Future[CasInfo] = {
     val result =

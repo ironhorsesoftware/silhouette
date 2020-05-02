@@ -50,7 +50,7 @@ object Cookie extends Function9[Int, String, String, String, DateTime, DateTime,
         authenticator.fingerprint)
 
   def fromDatabaseRecord(
-      record : (Int, String, String, String, Timestamp, Timestamp, Option[Time], Option[Time], Option[String])) = {
+      record : (Int, String, String, String, Timestamp, Timestamp, Option[Long], Option[Long], Option[String])) = {
 
     new Cookie(
         record._1,
@@ -59,8 +59,8 @@ object Cookie extends Function9[Int, String, String, String, DateTime, DateTime,
         record._4,
         DateTimeConverters.timestampToDateTime(record._5),
         DateTimeConverters.timestampToDateTime(record._6),
-        record._7.map(DateTimeConverters.timeToFiniteDuration),
-        record._8.map(DateTimeConverters.timeToFiniteDuration),
+        record._7.map(DateTimeConverters.millisToFiniteDuration),
+        record._8.map(DateTimeConverters.millisToFiniteDuration),
         record._9)
   }
 
@@ -71,7 +71,7 @@ object Cookie extends Function9[Int, String, String, String, DateTime, DateTime,
         cookie.providerKey,
         DateTimeConverters.dateTimeToTimestamp(cookie.lastUsedDateTime),
         DateTimeConverters.dateTimeToTimestamp(cookie.expirationDateTime),
-        cookie.idleTimeout.map(DateTimeConverters.durationToTime),
-        cookie.maxAge.map(DateTimeConverters.durationToTime),
+        cookie.idleTimeout.map(DateTimeConverters.durationToMillis),
+        cookie.maxAge.map(DateTimeConverters.durationToMillis),
         cookie.fingerprint))
 }

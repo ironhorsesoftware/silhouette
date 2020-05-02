@@ -9,7 +9,11 @@ object Serializers {
 
   def deserializeMapFromString(str : String) : Map[String, String] = {
     Json.parse(str).as[JsObject].value.map { case (key, value) =>
-      (key, value.toString)
+      val item = value.asOpt[String]
+      item match {
+        case Some(str) => (key, str)
+        case None => (key, item.toString)
+      }
     }.toMap
   }
 }

@@ -1,6 +1,6 @@
 package com.ironhorsesoftware.play.silhouette.persistence.repositories
 
-import java.sql.{Time, Timestamp}
+import java.sql.Timestamp
 import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,12 +31,15 @@ class SlickBearerTokenAuthenticatorRepository @Inject()(protected val dbConfigPr
     def providerKey = column[String]("provider_key")
     def lastUsedDateTime = column[Timestamp]("last_used_at")
     def expirationDateTime = column[Timestamp]("expires_at")
-    def idleTimeout = column[Option[Time]]("idle_timeout")
+    def idleTimeout = column[Option[Long]]("idle_timeout")
 
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout) <> (BearerToken.fromDatabaseRecord, BearerToken.toDatabaseRecord)
   }
 
   private val tokens = TableQuery[DbBearerToken]
+
+  def createSchema() = db.run(tokens.schema.create)
+  def dropSchema() : Future[Unit] = db.run(tokens.schema.drop)
 
   def add(authenticator : BearerTokenAuthenticator) : Future[BearerTokenAuthenticator] = {
     val result =
@@ -75,7 +78,7 @@ class SlickBearerTokenAuthenticatorRepository @Inject()(protected val dbConfigPr
                 bearerToken.providerKey,
                 DateTimeConverters.dateTimeToTimestamp(bearerToken.lastUsedDateTime),
                 DateTimeConverters.dateTimeToTimestamp(bearerToken.expirationDateTime),
-                bearerToken.idleTimeout.map(DateTimeConverters.durationToTime)
+                bearerToken.idleTimeout.map(DateTimeConverters.durationToMillis)
             )
         )
       result <- numRowsAffected match {

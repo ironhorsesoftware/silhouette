@@ -7,7 +7,7 @@ import scala.concurrent.duration.{Duration, FiniteDuration, MILLISECONDS}
 import org.joda.time.{Instant, DateTime, DateTimeZone}
 
 object DateTimeConverters {
-    def timestampToDateTime(ts : Timestamp) = {
+  def timestampToDateTime(ts : Timestamp) = {
     Instant.ofEpochMilli(ts.getTime).toDateTime().withZone(DateTimeZone.UTC)
   }
 
@@ -15,11 +15,11 @@ object DateTimeConverters {
     new Timestamp(dt.toInstant.getMillis)
   }
 
-  def timeToFiniteDuration(time : Time) = {
-    FiniteDuration(time.getTime(), MILLISECONDS)    
+  def millisToFiniteDuration(millis : Long) = {
+    FiniteDuration(millis, MILLISECONDS)    
   }
 
-  def durationToTime(duration : Duration) = {
-    new Time(duration.toMillis)
+  def durationToMillis(duration : Duration) = {
+    duration.toMillis
   }
 }

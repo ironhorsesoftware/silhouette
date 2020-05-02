@@ -11,7 +11,7 @@ import com.mohiva.play.silhouette.persistence.repositories.DelegableAuthInfoRepo
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickPasswordInfoDAO}
 import com.ironhorsesoftware.play.silhouette.persistence.daos.SlickCasInfoDAO
 import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOAuth1InfoDAO, SlickOAuth2InfoDAO}
-import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOpenIdDAO, SlickGoogleTotpInfoDAO}
+import com.ironhorsesoftware.play.silhouette.persistence.daos.{SlickOpenIDInfoDAO, SlickGoogleTotpInfoDAO}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
@@ -21,7 +21,7 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[SlickPasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[SlickOAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[SlickOAuth2InfoDAO]
-    bind[DelegableAuthInfoDAO[OpenIDInfo]].to[SlickOpenIdDAO]
+    bind[DelegableAuthInfoDAO[OpenIDInfo]].to[SlickOpenIDInfoDAO]
     bind[DelegableAuthInfoDAO[GoogleTotpInfo]].to[SlickGoogleTotpInfoDAO]
   }
 
