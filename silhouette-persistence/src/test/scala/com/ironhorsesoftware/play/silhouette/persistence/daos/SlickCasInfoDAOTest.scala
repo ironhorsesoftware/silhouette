@@ -23,36 +23,40 @@ class SlickCASInfoDAOSpec extends Specification {
 
       val app2dao = Application.instanceCache[SlickCasInfoDAO]
       val casInfoDAO: SlickCasInfoDAO = app2dao(app)
+      val loginInfo = LoginInfo("providerId", "key")
+      val authInfo = CasInfo("token")
 
-       Await.result(casInfoDAO.createSchema(), 10 seconds)
+      Await.result(casInfoDAO.createSchema(), 10 seconds)
 
-       val loginInfo = LoginInfo("providerId", "key")
-       val authInfo = CasInfo("token")
+      "A new CasInfo should be added" >> {
+        val createdCasInfo = Await.result(casInfoDAO.add(loginInfo, authInfo), 1 second)
+        createdCasInfo mustEqual authInfo         
+      }
 
-       val createdCasInfo = Await.result(casInfoDAO.add(loginInfo, authInfo), 1 second)
+      "The new CasInfo should be found" >> {
+        val foundCasInfoOption = Await.result(casInfoDAO.find(loginInfo), 1  second)      
+        foundCasInfoOption mustEqual Some(authInfo)
+      }
 
-       createdCasInfo mustEqual authInfo
+      val updatedCasInfo = CasInfo("newToken")
 
-       val foundCasInfoOption = Await.result(casInfoDAO.find(loginInfo), 1  second)
+      "Updating the CasInfo should save" >> {
+        val savedCasInfo = Await.result(casInfoDAO.save(loginInfo, updatedCasInfo), 1 second)
+        savedCasInfo mustEqual updatedCasInfo
+      }
 
-       foundCasInfoOption mustEqual Some(authInfo)
+      "Should find the updated CasInfo" >> {
+        val foundUpdatedCasInfo = Await.result(casInfoDAO.find(loginInfo), 1 second)
+        foundUpdatedCasInfo mustEqual Some(updatedCasInfo)
+      }
+      
+      "Should not be able to find the CasInfo after it was removed" >> {
+        Await.result(casInfoDAO.remove(loginInfo), 1 second)
+        val casInfoAfterRemovedOption = Await.result(casInfoDAO.find(loginInfo), 1 second)
+        casInfoAfterRemovedOption mustEqual None
+      }
 
-       val updatedCasInfo = CasInfo("newToken")
-       val savedCasInfo = Await.result(casInfoDAO.save(loginInfo, updatedCasInfo), 1 second)
-
-       savedCasInfo mustEqual updatedCasInfo
-
-       val foundUpdatedCasInfo = Await.result(casInfoDAO.find(loginInfo), 1 second)
-
-       foundUpdatedCasInfo mustEqual Some(updatedCasInfo)
-
-       Await.result(casInfoDAO.remove(loginInfo), 1 second)
- 
-       val casInfoAfterRemovedOption = Await.result(casInfoDAO.find(loginInfo), 1 second) 
-
-       casInfoAfterRemovedOption mustEqual None
-
-       Await.result(casInfoDAO.dropSchema(), 10 seconds)
+      Await.result(casInfoDAO.dropSchema(), 10 seconds)
     }
   }
 }
