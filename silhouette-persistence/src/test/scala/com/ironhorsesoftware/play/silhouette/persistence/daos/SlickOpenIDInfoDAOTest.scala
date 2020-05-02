@@ -14,9 +14,9 @@ import org.specs2.mutable.Specification
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class SlickOpenIdInfoDAOSpec extends Specification {
+class SlickOpenIDInfoDAOSpec extends Specification {
 
-  "SlickOpenIdInfoDAO" should {
+  "SlickOpenIDInfoDAO" should {
     "work as expected" in new WithApplicationLoader {
 
       val app2dao = Application.instanceCache[SlickOpenIDInfoDAO]
