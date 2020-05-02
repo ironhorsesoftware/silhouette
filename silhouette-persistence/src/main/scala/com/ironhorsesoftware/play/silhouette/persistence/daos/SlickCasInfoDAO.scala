@@ -12,7 +12,8 @@ import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.CasCredentials
 import slick.lifted.ProvenShape.proveShapeOf
 
-class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[CasInfo]) extends DelegableAuthInfoDAO[CasInfo] with Logging {
+class SlickCasInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[CasInfo] with Logging {
+  val classTag = scala.reflect.classTag[CasInfo]
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._

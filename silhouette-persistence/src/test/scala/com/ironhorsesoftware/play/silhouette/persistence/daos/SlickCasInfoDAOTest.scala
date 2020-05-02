@@ -1,43 +1,30 @@
 package com.ironhorsesoftware.play.silhouette.persistence.daos
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
-import scala.util.Try
+import scala.reflect.classTag
+import com.google.inject.Provides
 
-import org.scalatest.BeforeAndAfter
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
-
-import org.scalatestplus.play._
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-
-import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
-
-import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.CasInfo
 
-import com.ironhorsesoftware.play.silhouette.persistence.DatabaseCleanerOnEachTest
-import com.ironhorsesoftware.play.silhouette.persistence.InMemoryDatabaseFlatSpec
+import org.specs2.mutable.Specification
+import play.api.Application
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.test.WithApplicationLoader
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.DurationInt
 
-class SlickCasInfoDAOSpec extends AnyFlatSpec with GuiceOneAppPerSuite with BeforeAndAfter with Matchers {
+class RackRepositorySpec extends Specification {
 
-  private val casInfoDAO = app.injector.instanceOf[SlickCasInfoDAO]
+  @Provides
+  def provideCasInfoClassTag() = classTag[CasInfo]
 
-  def createTables() = {
-     Await.result(casInfoDAO.createSchema(), Duration.Inf)
+  "RackRepository" should {
+    "work as expected" in new WithApplicationLoader {
+
+      val app2dao = Application.instanceCache[SlickCasInfoDAO]
+      val rackRepository: SlickCasInfoDAO = app2dao(app)
+
+       Await.result(rackRepository.createSchema(), 3 seconds)
+    }
   }
-  
-  def dropTables() = {
-    Await.result(casInfoDAO.dropSchema(), Duration.Inf)
-  }
-
-  "SlickCasInfoDAOSpec" should "blah" in {
-    val loginInfo = LoginInfo("providerId", "providerKey")
-    val authInfo = CasInfo("ticket")
-
-    casInfoDAO.add(loginInfo, authInfo)
-    casInfoDAO.find(loginInfo)
-  }
-
 }

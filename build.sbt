@@ -55,5 +55,6 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 			"org.scalatest"          %% "scalatest"                     % scalaTestVersion % Test,
 			"org.scalatestplus.play" %% "scalatestplus-play"            % "3.1.2"          % Test,
 			"com.h2database"          % "h2"                            % "1.4.200"        % Test,
+			"com.typesafe.play"      %% "play-specs2"                   % playVersion      % Test
 		)
 	)
