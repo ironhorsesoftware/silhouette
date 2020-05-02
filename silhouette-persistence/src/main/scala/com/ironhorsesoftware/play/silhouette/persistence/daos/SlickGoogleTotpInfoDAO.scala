@@ -13,7 +13,8 @@ import com.mohiva.play.silhouette.persistence.daos.DelegableAuthInfoDAO
 
 import com.ironhorsesoftware.play.silhouette.persistence.model.authinfo.{GoogleTotpCredentials, GoogleTotpScratchCode}
 
-class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext, val classTag : ClassTag[GoogleTotpInfo]) extends DelegableAuthInfoDAO[GoogleTotpInfo] with Logging {
+class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(implicit ec : ExecutionContext) extends DelegableAuthInfoDAO[GoogleTotpInfo] with Logging {
+  val classTag = scala.reflect.classTag[GoogleTotpInfo]
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
 
   import dbConfig._
@@ -43,6 +44,10 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
   }
 
   private val scratchCodes = TableQuery[DbGoogleTotpScratchCodes]  
+
+  def createSchema() = db.run(DBIO.seq(credentials.schema.create, scratchCodes.schema.create))
+
+  def dropSchema() : Future[Unit] = db.run(DBIO.seq(scratchCodes.schema.drop, credentials.schema.drop))
 
   def add(loginInfo : LoginInfo, authInfo : GoogleTotpInfo) : Future[GoogleTotpInfo] = {
     find(loginInfo).flatMap { result =>
@@ -108,7 +113,7 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
           DBIO.sequence(Seq(delete, insert, update)).transactionally
         }.map(_ => authInfo)
       }
-      case None => Future.failed(new IllegalStateException(s"Cannot find a GoogleTotpInfo to update with the credentials ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
+      case None => Future.failed(new IllegalArgumentException(s"Cannot find a GoogleTotpInfo to update with the credentials ID ${loginInfo.providerID} and key ${loginInfo.providerKey}."))
     })
   }
 
