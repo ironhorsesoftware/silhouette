@@ -43,7 +43,7 @@ object BearerToken extends Function7[Int, String, String, String, DateTime, Date
         authenticator.idleTimeout)
 
   def fromDatabaseRecord(
-      record : (Int, String, String, String, Timestamp, Timestamp, Option[Time])) = {
+      record : (Int, String, String, String, Timestamp, Timestamp, Option[Long])) = {
 
     BearerToken(
         record._1,
@@ -52,7 +52,7 @@ object BearerToken extends Function7[Int, String, String, String, DateTime, Date
         record._4,
         DateTimeConverters.timestampToDateTime(record._5),
         DateTimeConverters.timestampToDateTime(record._6),
-        record._7.map(DateTimeConverters.timeToFiniteDuration))
+        record._7.map(DateTimeConverters.millisToFiniteDuration))
   }
 
   def toDatabaseRecord(bearerToken : BearerToken) = Some(
@@ -62,5 +62,5 @@ object BearerToken extends Function7[Int, String, String, String, DateTime, Date
         bearerToken.providerKey,
         DateTimeConverters.dateTimeToTimestamp(bearerToken.lastUsedDateTime),
         DateTimeConverters.dateTimeToTimestamp(bearerToken.expirationDateTime),
-        bearerToken.idleTimeout.map(DateTimeConverters.durationToTime)))
+        bearerToken.idleTimeout.map(DateTimeConverters.durationToMillis)))
 }

@@ -48,7 +48,7 @@ object JWT extends Function8[Int, String, String, String, DateTime, DateTime, Op
         authenticator.customClaims)
 
   def fromDatabaseRecord(
-      record : (Int, String, String, String, Timestamp, Timestamp, Option[Time], Option[String])) = {
+      record : (Int, String, String, String, Timestamp, Timestamp, Option[Long], Option[String])) = {
 
     new JWT(
       record._1,
@@ -57,7 +57,7 @@ object JWT extends Function8[Int, String, String, String, DateTime, DateTime, Op
       record._4,
       DateTimeConverters.timestampToDateTime(record._5),
       DateTimeConverters.timestampToDateTime(record._6),
-      record._7.map(DateTimeConverters.timeToFiniteDuration),
+      record._7.map(DateTimeConverters.millisToFiniteDuration),
       record._8.map(claims => Json.parse(claims).as[JsObject]))
   }
 
@@ -68,6 +68,6 @@ object JWT extends Function8[Int, String, String, String, DateTime, DateTime, Op
         jwt.providerKey,
         DateTimeConverters.dateTimeToTimestamp(jwt.lastUsedDateTime),
         DateTimeConverters.dateTimeToTimestamp(jwt.expirationDateTime),
-        jwt.idleTimeout.map(DateTimeConverters.durationToTime),
+        jwt.idleTimeout.map(DateTimeConverters.durationToMillis),
         jwt.customClaims.map(_.toString)))
 }

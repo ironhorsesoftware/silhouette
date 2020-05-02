@@ -32,7 +32,7 @@ class SlickJWTAuthenticatorRepository @Inject()(protected val dbConfigProvider: 
     def providerKey = column[String]("provider_key")
     def lastUsedDateTime = column[Timestamp]("last_used_at")
     def expirationDateTime = column[Timestamp]("expires_at")
-    def idleTimeout = column[Option[Time]]("idle_timeout")
+    def idleTimeout = column[Option[Long]]("idle_timeout")
     def customClaims = column[Option[String]]("custom_claims")
 
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout, customClaims) <> (JWT.fromDatabaseRecord, JWT.toDatabaseRecord)
@@ -77,7 +77,7 @@ class SlickJWTAuthenticatorRepository @Inject()(protected val dbConfigProvider: 
                 authenticatorToken.providerKey,
                 DateTimeConverters.dateTimeToTimestamp(authenticatorToken.lastUsedDateTime),
                 DateTimeConverters.dateTimeToTimestamp(authenticatorToken.expirationDateTime),
-                authenticatorToken.idleTimeout.map(DateTimeConverters.durationToTime),
+                authenticatorToken.idleTimeout.map(DateTimeConverters.durationToMillis),
                 authenticatorToken.customClaims.map(_.toString)
             )
         )

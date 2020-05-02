@@ -1,6 +1,6 @@
 package com.ironhorsesoftware.play.silhouette.persistence.repositories
 
-import java.sql.{Time, Timestamp}
+import java.sql.Timestamp
 import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,8 +31,8 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
     def providerKey = column[String]("provider_key")
     def lastUsedDateTime = column[Timestamp]("last_used_at")
     def expirationDateTime = column[Timestamp]("expires_at")
-    def idleTimeout = column[Option[Time]]("idle_timeout")
-    def maxAge = column[Option[Time]]("max_age")
+    def idleTimeout = column[Option[Long]]("idle_timeout")
+    def maxAge = column[Option[Long]]("max_age")
     def fingerprint = column[Option[String]]("fingerprint")
 
     def * = (id, authenticatorId, providerId, providerKey, lastUsedDateTime, expirationDateTime, idleTimeout, maxAge, fingerprint) <> (Cookie.fromDatabaseRecord, Cookie.toDatabaseRecord)
@@ -77,8 +77,8 @@ class SlickCookieAuthenticatorRepository @Inject()(protected val dbConfigProvide
                 authenticatorToken.providerKey,
                 DateTimeConverters.dateTimeToTimestamp(authenticatorToken.lastUsedDateTime),
                 DateTimeConverters.dateTimeToTimestamp(authenticatorToken.expirationDateTime),
-                authenticatorToken.idleTimeout.map(DateTimeConverters.durationToTime),
-                authenticatorToken.maxAge.map(DateTimeConverters.durationToTime),
+                authenticatorToken.idleTimeout.map(DateTimeConverters.durationToMillis),
+                authenticatorToken.maxAge.map(DateTimeConverters.durationToMillis),
                 authenticatorToken.fingerprint
             )
         )
