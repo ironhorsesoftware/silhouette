@@ -30,15 +30,28 @@ class SlickCASInfoDAOSpec extends Specification {
        val authInfo = CasInfo("token")
 
        val createdCasInfo = Await.result(casInfoDAO.add(loginInfo, authInfo), 1 second)
+
+       createdCasInfo mustEqual authInfo
+
        val foundCasInfoOption = Await.result(casInfoDAO.find(loginInfo), 1  second)
+
+       foundCasInfoOption mustEqual Some(authInfo)
 
        val updatedCasInfo = CasInfo("newToken")
        val savedCasInfo = Await.result(casInfoDAO.save(loginInfo, updatedCasInfo), 1 second)
 
+       savedCasInfo mustEqual updatedCasInfo
+
        val foundUpdatedCasInfo = Await.result(casInfoDAO.find(loginInfo), 1 second)
+
+       foundUpdatedCasInfo mustEqual Some(updatedCasInfo)
 
        Await.result(casInfoDAO.remove(loginInfo), 1 second)
  
+       val casInfoAfterRemovedOption = Await.result(casInfoDAO.find(loginInfo), 1 second) 
+
+       casInfoAfterRemovedOption mustEqual None
+
        Await.result(casInfoDAO.dropSchema(), 10 seconds)
     }
   }
