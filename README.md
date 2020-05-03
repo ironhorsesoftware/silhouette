@@ -298,7 +298,7 @@ For testing purposes, each of the DAOs and Repositories come with two methods: `
 
 #### `SlickCasInfoDAO`
 
-##### `credentials_cas`
+##### `credentials_cas` Table Definition
 
 Field Name  |Scala Type|Nullable?|Notes
 ------------|----------|---------|-----
@@ -309,7 +309,7 @@ ticket      |String    |No       |This is the CAS Ticket.
 
 #### `SlickGoogleTotpInfoDAO`
 
-##### `credentials_totp_google`
+##### `credentials_totp_google` Table Definition
 
 Field Name  |Scala Type|Nullable?|Notes
 ------------|----------|---------|-----
@@ -318,7 +318,7 @@ provider_id |String    |No       |This is the Provider ID in the LoginInfo. Cons
 provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
 shared_key  |String    |No       |
 
-##### `credentials_totp_google_scratch_codes`
+##### `credentials_totp_google_scratch_codes` Table Definition
 
 Field Name     |Scala Type|Nullable?|Notes
 ---------------|----------|---------|-----
@@ -330,7 +330,7 @@ salt           |String    |Yes      |
 
 #### `SlickOAuth1InfoDAO`
 
-* Table: `credentials_oauth1`
+##### `credentials_oauth1` Table Definition
 
 Field Name  |Scala Type|Nullable?|Notes
 ------------|----------|---------|-----
@@ -342,7 +342,7 @@ secret      |String    |No       |
 
 #### `SlickOAuth2InfoDAO`
 
-##### `credentials_oauth2`
+##### `credentials_oauth2` Table Definition
 
 Field Name   |Scala Type|Nullable?|Notes
 -------------|----------|---------|-----
@@ -372,7 +372,7 @@ CREATE TABLE credentials_oauth2 (
 
 #### `SlickOpenIDInfoDAO`
 
-* Table: `credentials_openid`
+##### `credentials_openid` Table Definition
 
 Field Name   |Scala Type|Nullable?|Notes
 -------------|----------|---------|-----
@@ -384,7 +384,7 @@ attributes   |String    |No       |The attributes are stored as a JSON object.
 
 #### `SlickPasswordInfoDAO`
 
-* Table: `credentials_password`
+##### `credentials_password` Table Definition
 
 Field Name      |Scala Type|Nullable?|Notes
 ----------------|----------|---------|-----
@@ -410,7 +410,7 @@ CREATE TABLE credentials_password (
 
 #### `SlickBearerTokenAuthenticatorRepository`
 
-* Table: `authentication_bearer_tokens`
+##### `authentication_bearer_tokens` Table Definition
 
 Field Name      |Scala Type|Nullable?|Notes
 ----------------|----------|---------|-----
@@ -440,7 +440,7 @@ fingerprint     |String    |Yes      |
 
 #### `SlickJWTAuthenticatorRepository`
 
-* Table:
+##### `authentication_jwts` Table Definition
 
 Field Name      |Scala Type|Nullable?|Notes
 ----------------|----------|---------|-----
