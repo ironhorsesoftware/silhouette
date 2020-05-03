@@ -141,6 +141,7 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
     clock: Clock,
     repository : AuthenticatorRepository[BearerTokenAuthenticator]): AuthenticatorService[BearerTokenAuthenticator] = {
 
+    // Use your mechanism of choice to read the BearerTokenAuthenticatorSettings.
     val config = configuration.underlying.as[BearerTokenAuthenticatorSettings]("silhouette.authenticator.bearer")
 
     new BearerTokenAuthenticatorService(config, repository, idGenerator, clock)
