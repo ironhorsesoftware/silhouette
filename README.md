@@ -6,6 +6,17 @@ The `silhouette` project provides an alternate binding for `Clock` which uses th
 
 The `silhouette-persistence` project provides bindings to persist all of the Silhouette `AuthInfo` and `StorableAuthenticator` (excluding `FakeAuthenticator`) objects to a relational database using Slick.
 
+## `build.sbt`
+
+Add the following to your `build.sbt` to include the library as a dependency.
+
+```scala
+externalResolvers += "Iron Horse Software Silhouette Packages" at "https://maven.pkg.github.com/ironhorsesoftware/silhouette"
+libraryDependencies +=  "silhouette-persistence" %% "silhouette-persistence" % "<version>"
+```
+
+Currently, the only version is `0.6.0-SNAPSHOT`, which builds against Silhouette 6.0 / Play 2.7 / Scala 2.12.  More to come.
+
 ## Usage
 
 ### AuthInfo
