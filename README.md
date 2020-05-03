@@ -401,10 +401,10 @@ password_salt   |String    |Yes      |
 CREATE TABLE credentials_password (
     id              SERIAL    PRIMARY KEY,
     provider_id     TEXT                   NOT NULL,
-	provider_key    TEXT                   NOT NULL,
-	password        TEXT                   NOT NULL,
-	password_hasher TEXT                   NOT NULL,
-	password_salt   TEXT
+    provider_key    TEXT                   NOT NULL,
+    password        TEXT                   NOT NULL,
+    password_hasher TEXT                   NOT NULL,
+    password_salt   TEXT
 );
 ```
 
