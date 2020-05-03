@@ -16,6 +16,9 @@ lazy val playSlickVersion = "4.0.2"
 lazy val scalaGuiceVersion = "4.2.6"
 lazy val scalaTestVersion = "3.1.1"
 
+githubOwner := projectGithubOwner
+githubRepository := projectGithubRepository
+
 lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
 	.settings(
