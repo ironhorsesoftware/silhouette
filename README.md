@@ -292,9 +292,9 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
 
 ### Database Schema
 
-You will need to add tables to your database depending on which DAOs and Repositories you use.  The database type information is provided below, with some examples for Postgresql.
+You will need to add tables to your database depending on which DAOs and Repositories you use.  The database type information is provided below, with some examples for PostgreSQL.
 
-For testing purposes, each of the DAOs and Repositores come with two methods: `createSchema` and `dropSchema`, which will use Slick to create and drop the tables.
+For testing purposes, each of the DAOs and Repositories come with two methods: `createSchema` and `dropSchema`, which will use Slick to create and drop the tables.
 
 #### `SlickCasInfoDAO`
 
@@ -355,6 +355,21 @@ expires_in   |Int       |Yes      |
 refresh_token|String    |Yes      |
 params       |String    |Yes      |The Map[String, String] params are stored as a JSON object.
 
+##### PostgreSQL Example
+
+```sql
+CREATE TABLE credentials_oauth2 (
+    id              SERIAL    PRIMARY KEY,
+    provider_id     TEXT                   NOT NULL,
+    provider_key    TEXT                   NOT NULL,
+    access_token    TEXT                   NOT NULL,
+    token_type      TEXT,
+    expires_in      INTEGER,
+    refresh_token   TEXT,
+    params          TEXT
+);
+```
+
 #### `SlickOpenIDInfoDAO`
 
 * Table: `credentials_openid`
@@ -371,11 +386,69 @@ attributes   |String    |No       |The attributes are stored as a JSON object.
 
 * Table: `credentials_password`
 
-Field Name   |Scala Type|Nullable?|Notes
--------------|----------|---------|-----
-id           |Int       |No       |Primary Key + Auto-Increment
-provider_id  |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
-provider_key |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
-password       |String    |No       |
-password_hasher         |String    |No       |
-password_salt           |String    |Yes      |
+Field Name      |Scala Type|Nullable?|Notes
+----------------|----------|---------|-----
+id              |Int       |No       |Primary Key + Auto-Increment
+provider_id     |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key    |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+password        |String    |No       |
+password_hasher |String    |No       |
+password_salt   |String    |Yes      |
+
+##### PostgreSQL Example
+
+```sql
+CREATE TABLE credentials_password (
+    id              SERIAL    PRIMARY KEY,
+    provider_id     TEXT                   NOT NULL,
+	provider_key    TEXT                   NOT NULL,
+	password        TEXT                   NOT NULL,
+	password_hasher TEXT                   NOT NULL,
+	password_salt   TEXT
+);
+```
+
+#### `SlickBearerTokenAuthenticatorRepository`
+
+* Table: `authentication_bearer_tokens`
+
+Field Name      |Scala Type|Nullable?|Notes
+----------------|----------|---------|-----
+id              |Int       |No       |Primary Key + Auto-Increment
+authenticator_id|String    |No       |This is the key Silhouette will use.  Consider indexing this field.
+provider_id     |String    |No       |
+provider_key    |String    |No       |
+last_used_at    |Timestamp |No       |The timestamp will be recorded in UTC.
+expires_at      |Timestamp |No       |The timestamp will be recorded in UTC.
+idle_timeout    |Long      |Yes      |The idle timeout will be recorded in milliseconds.
+
+#### `SlickCookieAuthenticatorRepository`
+
+* Table: `authentication_cookies`
+
+Field Name      |Scala Type|Nullable?|Notes
+----------------|----------|---------|-----
+id              |Int       |No       |Primary Key + Auto-Increment
+authenticator_id|String    |No       |This is the key Silhouette will use.  Consider indexing this field.
+provider_id     |String    |No       |
+provider_key    |String    |No       |
+last_used_at    |Timestamp |No       |The timestamp will be recorded in UTC.
+expires_at      |Timestamp |No       |The timestamp will be recorded in UTC.
+idle_timeout    |Long      |Yes      |The idle timeout will be recorded in milliseconds.
+max_age         |Long      |Yes      |The maximum age will be recorded in milliseconds.
+fingerprint     |String    |Yes      |
+
+#### `SlickJWTAuthenticatorRepository`
+
+* Table:
+
+Field Name      |Scala Type|Nullable?|Notes
+----------------|----------|---------|-----
+id              |Int       |No       |Primary Key + Auto-Increment
+authenticator_id|String    |No       |This is the key Silhouette will use.  Consider indexing this field.
+provider_id     |String    |No       |
+provider_key    |String    |No       |
+last_used_at    |Timestamp |No       |The timestamp will be recorded in UTC.
+expires_at      |Timestamp |No       |The timestamp will be recorded in UTC.
+idle_timeout    |Long      |Yes      |The idle timeout will be recorded in milliseconds.
+custom_claims   |String    |Yes      |The custom claims will be recorded as a JSON object.
