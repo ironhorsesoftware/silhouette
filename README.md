@@ -298,7 +298,7 @@ For testing purposes, each of the DAOs and Repositories come with two methods: `
 
 #### `SlickCasInfoDAO`
 
-* Table: `credentials_cas`
+##### `credentials_cas`
 
 Field Name  |Scala Type|Nullable?|Notes
 ------------|----------|---------|-----
@@ -309,7 +309,7 @@ ticket      |String    |No       |This is the CAS Ticket.
 
 #### `SlickGoogleTotpInfoDAO`
 
-* Table: `credentials_totp_google`
+##### `credentials_totp_google`
 
 Field Name  |Scala Type|Nullable?|Notes
 ------------|----------|---------|-----
@@ -318,7 +318,7 @@ provider_id |String    |No       |This is the Provider ID in the LoginInfo. Cons
 provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
 shared_key  |String    |No       |
 
-* Table: `credentials_totp_google_scratch_codes`
+##### `credentials_totp_google_scratch_codes`
 
 Field Name     |Scala Type|Nullable?|Notes
 ---------------|----------|---------|-----
@@ -342,7 +342,7 @@ secret      |String    |No       |
 
 #### `SlickOAuth2InfoDAO`
 
-* Table: `credentials_oauth2`
+##### `credentials_oauth2`
 
 Field Name   |Scala Type|Nullable?|Notes
 -------------|----------|---------|-----
