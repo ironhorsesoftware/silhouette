@@ -424,7 +424,7 @@ idle_timeout    |Long      |Yes      |The idle timeout will be recorded in milli
 
 #### `SlickCookieAuthenticatorRepository`
 
-* Table: `authentication_cookies`
+##### `authentication_cookies` Table Definition
 
 Field Name      |Scala Type|Nullable?|Notes
 ----------------|----------|---------|-----
