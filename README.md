@@ -122,7 +122,7 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[Clock].toInstance(Clock())
 
-  	bind[AuthenticatorRepository[BearerTokenAuthenticator]].to[SlickBearerTokenAuthenticatorRepository]
+    bind[AuthenticatorRepository[BearerTokenAuthenticator]].to[SlickBearerTokenAuthenticatorRepository]
   }
 
   /**
@@ -199,7 +199,7 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
     bind[Clock].toInstance(Clock())
 
-  	bind[AuthenticatorRepository[CookieAuthenticator]].to[SlickCookieAuthenticatorRepository]
+    bind[AuthenticatorRepository[CookieAuthenticator]].to[SlickCookieAuthenticatorRepository]
   }
 
   /**
@@ -260,7 +260,7 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[Clock].toInstance(Clock())
 
-  	bind[AuthenticatorRepository[JWTAuthenticator]].to[SlickJWTAuthenticatorRepository]
+    bind[AuthenticatorRepository[JWTAuthenticator]].to[SlickJWTAuthenticatorRepository]
   }
 
   /**
