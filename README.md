@@ -13,11 +13,11 @@ The `silhouette-persistence` project provides bindings to persist all of the Sil
 Silhouette provides the following classes to store the authentication information for each [Silhouette provider](https://www.silhouette.rocks/docs/providers):
 
 1. `CasInfo`
-6. `GoogleTotpInfo`
-3. `OAuth1Info`
-4. `OAuth2Info`
-5. `OpenIDInfo`
-2. `PasswordInfo`
+1. `GoogleTotpInfo`
+1. `OAuth1Info`
+1. `OAuth2Info`
+1. `OpenIDInfo`
+1. `PasswordInfo`
 
 There are two ways to bind these `AuthInfo` implementations in your project to the provided Slick instances.  The first is to enable the provided `SlickPersistenceModule`, which will define an instance of `DelegableAuthInfoRepository` with all of the instances bound.  The second way is to bind the individual DAOs in your own module and constructing the `DelegableAuthInfoRepository` yourself.
 
@@ -290,8 +290,92 @@ class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
 }
 ```
 
-## SQL
+### Database Schema
 
-You will need to add the following tables to your database.
+You will need to add tables to your database depending on which DAOs and Repositories you use.  The database type information is provided below, with some examples for Postgresql.
 
+For testing purposes, each of the DAOs and Repositores come with two methods: `createSchema` and `dropSchema`, which will use Slick to create and drop the tables.
 
+#### `SlickCasInfoDAO`
+
+* Table: `credentials_cas`
+
+Field Name  |Scala Type|Nullable?|Notes
+------------|----------|---------|-----
+id          |Int       |No       |Primary Key + Auto-Increment
+provider_id |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+ticket      |String    |No       |This is the CAS Ticket.
+
+#### `SlickGoogleTotpInfoDAO`
+
+* Table: `credentials_totp_google`
+
+Field Name  |Scala Type|Nullable?|Notes
+------------|----------|---------|-----
+id          |Int       |No       |Primary Key + Auto-Increment
+provider_id |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+shared_key  |String    |No       |
+
+* Table: `credentials_totp_google_scratch_codes`
+
+Field Name     |Scala Type|Nullable?|Notes
+---------------|----------|---------|-----
+id             |Int       |No       |Primary Key + Auto-Increment
+google_totp_id |Int       |No       |Foreign Key to `credentials_totp_google`
+hasher         |String    |No       |
+password       |String    |No       |
+salt           |String    |Yes      |
+
+#### `SlickOAuth1InfoDAO`
+
+* Table: `credentials_oauth1`
+
+Field Name  |Scala Type|Nullable?|Notes
+------------|----------|---------|-----
+id          |Int       |No       |Primary Key + Auto-Increment
+provider_id |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+token       |String    |No       |
+secret      |String    |No       |
+
+#### `SlickOAuth2InfoDAO`
+
+* Table: `credentials_oauth2`
+
+Field Name   |Scala Type|Nullable?|Notes
+-------------|----------|---------|-----
+id           |Int       |No       |Primary Key + Auto-Increment
+provider_id  |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+access_token |String    |No       |
+token_type   |String    |Yes      |
+expires_in   |Int       |Yes      |
+refresh_token|String    |Yes      |
+params       |String    |Yes      |The Map[String, String] params are stored as a JSON object.
+
+#### `SlickOpenIDInfoDAO`
+
+* Table: `credentials_openid`
+
+Field Name   |Scala Type|Nullable?|Notes
+-------------|----------|---------|-----
+id           |Int       |No       |Primary Key + Auto-Increment
+provider_id  |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+openid       |String    |No       |
+attributes   |String    |No       |The attributes are stored as a JSON object.
+
+#### `SlickPasswordInfoDAO`
+
+* Table: `credentials_password`
+
+Field Name   |Scala Type|Nullable?|Notes
+-------------|----------|---------|-----
+id           |Int       |No       |Primary Key + Auto-Increment
+provider_id  |String    |No       |This is the Provider ID in the LoginInfo. Consider indexing this field.
+provider_key |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
+password       |String    |No       |
+password_hasher         |String    |No       |
+password_salt           |String    |Yes      |
