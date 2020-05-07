@@ -34,7 +34,7 @@ There are two ways to bind these `AuthInfo` implementations in your project to t
 
 #### DelegableAuthInfoRepository
 
-Adding the `SlickPersistenceModule` to a Play project will automatically bind all of the `AuthInfo` instances to the project's Slick-based implementations, and a Guice provider for a `DelegableAuthInfoRepository` with all of them wired in.  To be clear, this includes instances of the following `AuthInfo` types:
+Adding the `SlickPersistenceModule` to a Play project will automatically bind all of the `AuthInfo` instances to the project's Slick-based implementations, and a Guice provider for a `DelegableAuthInfoRepository` with all of them wired in.
 
 
 To enable the module, add this line to your `application.conf`:
