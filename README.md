@@ -15,7 +15,7 @@ externalResolvers += "Iron Horse Software Silhouette Packages" at "https://maven
 libraryDependencies +=  "silhouette-persistence" %% "silhouette-persistence" % "<version>"
 ```
 
-Currently, the only version is `0.6.0-SNAPSHOT`, which builds against Silhouette 6.0 / Play 2.7 / Scala 2.12.  More to come.
+Currently, the only version is `0.6.1`, which builds against Silhouette 6.0 / Play 2.7 / Scala 2.12.  More to come.
 
 ## Usage
 
