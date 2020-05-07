@@ -412,7 +412,7 @@ CREATE TABLE credentials_openid (
     id           SERIAL PRIMARY KEY,
     provider_id  TEXT NOT NULL,
     provider_key TEXT NOT NULL,
-    openid TEXT  NOT NULL,
+    openid       TEXT NOT NULL,
     attributes   TEXT NOT NULL
 );
 ```
