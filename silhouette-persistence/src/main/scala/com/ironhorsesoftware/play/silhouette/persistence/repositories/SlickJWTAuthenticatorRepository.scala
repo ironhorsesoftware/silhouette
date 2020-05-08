@@ -66,7 +66,7 @@ class SlickJWTAuthenticatorRepository @Inject()(protected val dbConfigProvider: 
 
   def remove(id : String) : Future[Unit] = db.run {
     val q =  for { tkn <- tokens if tkn.authenticatorId === id } yield tkn
-    q.delete.map(_ => Unit)
+    q.delete.map(_ => ())
   }
 
   def update(authenticator : JWTAuthenticator) : Future[JWTAuthenticator] = db.run {

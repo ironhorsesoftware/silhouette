@@ -23,21 +23,24 @@ lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
 	.settings(
 		name := "root",
-		version := "0.0.1-SNAPSHOT",
-		crossScalaVersions := Seq(scala213,scala212,scala211),
+		version := "0.0.3-SNAPSHOT",
+		crossScalaVersions := Nil,
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		publishLocal := {},
 		publishM2 := {},
-		publishArtifact := false
+		publish / skip := true
 	).dependsOn(silhouette, silhouettePersistence)
 
 lazy val silhouette = (project in file("silhouette"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette",
-		version := "0.0.1-SNAPSHOT",
+		version := "0.0.3-SNAPSHOT",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
+		crossScalaVersions := Seq(scala213,scala212,scala211),
 		maintainer := projectMaintainer,
+		githubOwner := projectGithubOwner,
+		githubRepository := projectGithubRepository,
 		libraryDependencies ++= Seq(
 		  "com.typesafe.play"      %% "play-ws"                         % playVersion,
 		  "com.typesafe.play"      %% "play-openid"                     % playVersion,
@@ -50,8 +53,9 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
-		version := "0.6.0-SNAPSHOT",
+		version := "0.6.2-SNAPSHOT",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
+		crossScalaVersions := Seq(scala213,scala211),
 		maintainer := projectMaintainer,
 		githubOwner := projectGithubOwner,
 		githubRepository := projectGithubRepository,
