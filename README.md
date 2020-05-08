@@ -34,7 +34,7 @@ There are two ways to bind these `AuthInfo` implementations in your project to t
 
 #### DelegableAuthInfoRepository
 
-Adding the `SlickPersistenceModule` to a Play project will automatically bind all of the `AuthInfo` instances to the project's Slick-based implementations, and a Guice provider for a `DelegableAuthInfoRepository` with all of them wired in.  To be clear, this includes instances of the following `AuthInfo` types:
+Adding the `SlickPersistenceModule` to a Play project will automatically bind all of the `AuthInfo` instances to the project's Slick-based implementations, and a Guice provider for a `DelegableAuthInfoRepository` with all of them wired in.
 
 
 To enable the module, add this line to your `application.conf`:
@@ -351,6 +351,18 @@ provider_key|String    |No       |This is the Provider Key in the LoginInfo.  Co
 token       |String    |No       |
 secret      |String    |No       |
 
+##### PostgreSQL Example
+
+```sql
+CREATE TABLE credentials_oauth1 (
+    id           SERIAL PRIMARY KEY,
+    provider_id  TEXT NOT NULL,
+    provider_key TEXT NOT NULL,
+    token        TEXT NOT NULL,
+    secret       TEXT NOT NULL
+);
+```
+
 #### `SlickOAuth2InfoDAO`
 
 ##### `credentials_oauth2` Table Definition
@@ -392,6 +404,18 @@ provider_id  |String    |No       |This is the Provider ID in the LoginInfo. Con
 provider_key |String    |No       |This is the Provider Key in the LoginInfo.  Consider indexing this field.
 openid       |String    |No       |
 attributes   |String    |No       |The attributes are stored as a JSON object.
+
+##### PostgreSQL Example
+
+```sql
+CREATE TABLE credentials_openid (
+    id           SERIAL PRIMARY KEY,
+    provider_id  TEXT NOT NULL,
+    provider_key TEXT NOT NULL,
+    openid       TEXT NOT NULL,
+    attributes   TEXT NOT NULL
+);
+```
 
 #### `SlickPasswordInfoDAO`
 
@@ -448,6 +472,22 @@ expires_at      |Timestamp |No       |The timestamp will be recorded in UTC.
 idle_timeout    |Long      |Yes      |The idle timeout will be recorded in milliseconds.
 max_age         |Long      |Yes      |The maximum age will be recorded in milliseconds.
 fingerprint     |String    |Yes      |
+
+##### PostgreSQL Example
+
+```sql
+CREATE TABLE authentication_cookies (
+    id               SERIAL PRIMARY KEY,
+    authenticator_id TEXT NOT NULL,
+    provider_id      TEXT NOT NULL,
+    provider_key     TEXT NOT NULL,
+    last_used_at     TIMESTAMP NOT NULL,
+    expires_at       TIMESTAMP NOT NULL,
+    idle_timeout     BIGINT,
+    max_age          BIGINT,
+    fingerprint      TEXT
+);
+```
 
 #### `SlickJWTAuthenticatorRepository`
 
