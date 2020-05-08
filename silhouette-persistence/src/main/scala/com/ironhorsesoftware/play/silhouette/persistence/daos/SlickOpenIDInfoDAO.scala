@@ -58,7 +58,7 @@ class SlickOpenIDInfoDAO @Inject()(protected val dbConfigProvider: DatabaseConfi
 
   def remove(loginInfo : LoginInfo) : Future[Unit] = db.run {
     val q = for { creds <- credentials if creds.providerId === loginInfo.providerID && creds.providerKey === loginInfo.providerKey } yield creds
-    q.delete.map(_ => Unit)
+    q.delete.map(_ => ())
   }
 
   def save(loginInfo : LoginInfo, authInfo : OpenIDInfo) : Future[OpenIDInfo] = db.run {

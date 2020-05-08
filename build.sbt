@@ -53,7 +53,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
-		version := "0.6.1",
+		version := "0.6.2-SNAPSHOT",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		crossScalaVersions := Seq(scala213,scala211),
 		maintainer := projectMaintainer,

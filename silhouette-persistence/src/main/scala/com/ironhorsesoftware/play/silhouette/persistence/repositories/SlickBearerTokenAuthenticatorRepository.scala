@@ -64,7 +64,7 @@ class SlickBearerTokenAuthenticatorRepository @Inject()(protected val dbConfigPr
 
   def remove(id : String) : Future[Unit] = db.run {
     val q =  for { tkn <- tokens if tkn.authenticatorId === id } yield tkn
-    q.delete.map(_ => Unit)
+    q.delete.map(_ => ())
   }
 
   def update(authenticator : BearerTokenAuthenticator) : Future[BearerTokenAuthenticator] = db.run {

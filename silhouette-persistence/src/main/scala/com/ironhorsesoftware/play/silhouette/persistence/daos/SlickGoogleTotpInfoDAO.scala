@@ -81,9 +81,9 @@ class SlickGoogleTotpInfoDAO @Inject()(protected val dbConfigProvider: DatabaseC
   
         db.run {
           DBIO.sequence(Seq(q1.delete, q2.delete)).transactionally
-        }.map(_ => Unit)
+        }.map(_ => ())
       }
-      case None => Future.successful(Unit)
+      case None => Future.successful(())
     })
   }
 

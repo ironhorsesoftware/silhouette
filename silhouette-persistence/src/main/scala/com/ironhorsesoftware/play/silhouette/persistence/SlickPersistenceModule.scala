@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class SlickPersistenceModule @Inject() extends AbstractModule with ScalaModule {
 
-  override def configure {
+  override def configure : Unit = {
     bind[DelegableAuthInfoDAO[CasInfo]].to[SlickCasInfoDAO]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[SlickPasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[SlickOAuth1InfoDAO]
