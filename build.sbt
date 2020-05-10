@@ -2,9 +2,11 @@ lazy val scala213 = "2.13.0"
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 
-scalaVersion := scala212
+ThisBuild / scalaVersion := scala212
 
-organization := "com.ironhorsesoftware"
+ThisBuild / organization := "com.ironhorsesoftware.silhouette"
+ThisBuild / organizationName := "ironhorsesoftware"
+ThisBuild / organizationHomepage := Some(url("http://ironhorsesoftware.com/"))
 
 lazy val projectMaintainer = "mpigott@ironhorsesoftware.com"
 lazy val projectGithubOwner = "ironhorsesoftware"
@@ -18,6 +20,26 @@ lazy val scalaTestVersion = "3.1.1"
 
 githubOwner := projectGithubOwner
 githubRepository := projectGithubRepository
+
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/ironhorsesoftware/silhouette"),
+    "scm:git@github.com:ironhorsesoftware/silhouette.git"
+  )
+)
+
+ThisBuild / developers := List(
+  Developer(
+    id    = "mpigott",
+    name  = "Michael Pigott",
+    email = "mpigott@ironhorsesoftware.com",
+    url   = url("http://ironhorsesoftware.com")
+  )
+)
+
+ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+ThisBuild / pomIncludeRepository := { _ => false }
 
 lazy val root = (project in file ("."))
 	.aggregate(silhouette, silhouettePersistence)
@@ -37,10 +59,11 @@ lazy val silhouette = (project in file("silhouette"))
 		name := "silhouette",
 		version := "0.0.3-SNAPSHOT",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
-		crossScalaVersions := Seq(scala213,scala212,scala211),
+		crossScalaVersions := Seq(scala213,scala212),
 		maintainer := projectMaintainer,
 		githubOwner := projectGithubOwner,
 		githubRepository := projectGithubRepository,
+		publish / skip := true,
 		libraryDependencies ++= Seq(
 		  "com.typesafe.play"      %% "play-ws"                         % playVersion,
 		  "com.typesafe.play"      %% "play-openid"                     % playVersion,
@@ -53,12 +76,19 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
-		version := "0.6.2-SNAPSHOT",
+		version := "0.6.0",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
-		crossScalaVersions := Seq(scala213,scala211),
+		crossScalaVersions := Seq(scala213,scala212),
 		maintainer := projectMaintainer,
 		githubOwner := projectGithubOwner,
 		githubRepository := projectGithubRepository,
+		description := "A set of Slick-based DAOs and Repositories for Silhouette.",
+		publishTo := {
+		  val nexus = "https://oss.sonatype.org/"
+		  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+		  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+		},
+		publishMavenStyle := true,
 		libraryDependencies ++= Seq(
 		    "com.mohiva"             %% "play-silhouette"               % silhouetteVersion,
 			"com.mohiva"             %% "play-silhouette-cas"           % silhouetteVersion,
