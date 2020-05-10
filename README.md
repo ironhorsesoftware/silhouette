@@ -11,14 +11,13 @@ The `silhouette-persistence` project provides bindings to persist all of the Sil
 Add the following to your `build.sbt` to include the library as a dependency.
 
 ```scala
-externalResolvers += "Iron Horse Software Silhouette Packages" at "https://maven.pkg.github.com/ironhorsesoftware/silhouette"
-libraryDependencies +=  "silhouette-persistence" %% "silhouette-persistence" % "<version>"
+libraryDependencies +=  "com.ironhorsesoftware.silhouette" %% "silhouette-persistence" % "<version>"
 ```
 
 #### Available Versions
 
 Version|Silhouette Version|Play Version|Scala Version
--------+------------------+------------+-------------
+-------|------------------|------------|-------------
 [0.6](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.12/0.6.0/jar)|6.x|2.7.x|2.12
 
 ## Usage
