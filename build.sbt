@@ -32,6 +32,8 @@ ThisBuild / developers := List(
   )
 )
 
+ThisBuild / homepage := Some(url("https://github.com/ironhorsesoftware/silhouette"))
+
 ThisBuild / licenses := List("Apache 2" -> new URL("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 ThisBuild / pomIncludeRepository := { _ => false }
@@ -69,7 +71,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
-		version := "0.6.0",
+		version := "0.6.1",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		crossScalaVersions := Seq(scala213,scala212),
 		maintainer := projectMaintainer,
