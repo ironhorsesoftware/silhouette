@@ -5,21 +5,16 @@ lazy val scala211 = "2.11.12"
 ThisBuild / scalaVersion := scala212
 
 ThisBuild / organization := "com.ironhorsesoftware.silhouette"
-ThisBuild / organizationName := "ironhorsesoftware"
+ThisBuild / organizationName := "Iron Horse Software, L.L.C."
 ThisBuild / organizationHomepage := Some(url("http://ironhorsesoftware.com/"))
 
 lazy val projectMaintainer = "mpigott@ironhorsesoftware.com"
-lazy val projectGithubOwner = "ironhorsesoftware"
-lazy val projectGithubRepository = "silhouette"
 
 lazy val silhouetteVersion = "6.1.1"
 lazy val playVersion = "2.7.3"
 lazy val playSlickVersion = "4.0.2"
 lazy val scalaGuiceVersion = "4.2.6"
 lazy val scalaTestVersion = "3.1.1"
-
-githubOwner := projectGithubOwner
-githubRepository := projectGithubRepository
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -61,8 +56,6 @@ lazy val silhouette = (project in file("silhouette"))
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		crossScalaVersions := Seq(scala213,scala212),
 		maintainer := projectMaintainer,
-		githubOwner := projectGithubOwner,
-		githubRepository := projectGithubRepository,
 		publish / skip := true,
 		libraryDependencies ++= Seq(
 		  "com.typesafe.play"      %% "play-ws"                         % playVersion,
@@ -80,8 +73,6 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
 		crossScalaVersions := Seq(scala213,scala212),
 		maintainer := projectMaintainer,
-		githubOwner := projectGithubOwner,
-		githubRepository := projectGithubRepository,
 		description := "A set of Slick-based DAOs and Repositories for Silhouette.",
 		publishTo := {
 		  val nexus = "https://oss.sonatype.org/"
