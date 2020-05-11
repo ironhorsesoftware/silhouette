@@ -18,7 +18,9 @@ libraryDependencies +=  "com.ironhorsesoftware.silhouette" %% "silhouette-persis
 
 Version|[Silhouette](https://www.silhouette.rocks/) Version|[Play](https://www.playframework.com/documentation/2.7.x/Introduction) Version|[Play-Slick](https://www.playframework.com/documentation/2.7.x/PlaySlick) Version|Scala Version
 -------|------------------|------------|------------------|-------------
+[0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.11/0.6.1/jar)|6.x|2.7.x|4.x|2.11
 [0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.12/0.6.1/jar)|6.x|2.7.x|4.x|2.12
+[0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.13/0.6.1/jar)|6.x|2.7.x|4.x|2.13
 
 ## Usage
 
