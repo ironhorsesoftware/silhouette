@@ -1,8 +1,8 @@
-lazy val scala213 = "2.13.0"
+lazy val scala213 = "2.13.1"
 lazy val scala212 = "2.12.8"
 lazy val scala211 = "2.11.12"
 
-ThisBuild / scalaVersion := scala212
+ThisBuild / scalaVersion := scala213
 
 ThisBuild / organization := "com.ironhorsesoftware.silhouette"
 ThisBuild / organizationName := "Iron Horse Software, L.L.C."
@@ -10,9 +10,9 @@ ThisBuild / organizationHomepage := Some(url("http://ironhorsesoftware.com/"))
 
 lazy val projectMaintainer = "mpigott@ironhorsesoftware.com"
 
-lazy val silhouetteVersion = "6.1.1"
-lazy val playVersion = "2.7.3"
-lazy val playSlickVersion = "4.0.2"
+lazy val silhouetteVersion = "7.0.0"
+lazy val playVersion = "2.8.1"
+lazy val playSlickVersion = "5.0.0"
 lazy val scalaGuiceVersion = "4.2.6"
 lazy val scalaTestVersion = "3.1.1"
 
@@ -73,7 +73,7 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 		name := "silhouette-persistence",
 		version := "0.6.1",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
-		crossScalaVersions := Seq(scala211,scala212,scala213),
+		crossScalaVersions := Seq(scala212),
 		maintainer := projectMaintainer,
 		description := "A set of Slick-based DAOs and Repositories for Silhouette.",
 		publishTo := {
