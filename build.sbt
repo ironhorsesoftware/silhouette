@@ -71,9 +71,9 @@ lazy val silhouettePersistence = (project in file ("silhouette-persistence"))
 	.enablePlugins(JavaAppPackaging)
 	.settings(
 		name := "silhouette-persistence",
-		version := "0.6.1",
+		version := "0.7.0",
 		scalacOptions ++= Seq("-deprecation", "-unchecked", "-language:_"),
-		crossScalaVersions := Seq(scala212),
+		crossScalaVersions := Seq(scala212,scala213),
 		maintainer := projectMaintainer,
 		description := "A set of Slick-based DAOs and Repositories for Silhouette.",
 		publishTo := {
