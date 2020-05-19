@@ -21,6 +21,8 @@ Version|[Silhouette](https://www.silhouette.rocks/) Version|[Play](https://www.p
 [0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.11/0.6.1/jar)|6.x|2.7.x|4.x|2.11
 [0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.12/0.6.1/jar)|6.x|2.7.x|4.x|2.12
 [0.6.1](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.13/0.6.1/jar)|6.x|2.7.x|4.x|2.13
+[0.7.0](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.12/0.7.0/jar)|7.x|2.8.x|5.x|2.12
+[0.7.0](https://search.maven.org/artifact/com.ironhorsesoftware.silhouette/silhouette-persistence_2.13/0.7.0/jar)|7.x|2.8.x|5.x|2.13
 
 ## Usage
 
